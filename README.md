@@ -1,1 +1,1 @@
-# SmaterHomes
+# SmaeterHomes
