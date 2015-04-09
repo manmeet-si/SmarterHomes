@@ -40,6 +40,7 @@ import com.assignment2.dos.smartHomes.Network.MotionSensorCommunicator;
 import com.assignment2.dos.smartHomes.Network.OutletDeviceCommunicator;
 import com.assignment2.dos.smartHomes.Network.RegisterName;
 import com.assignment2.dos.smartHomes.Network.UpdateNames;
+import com.assignment2.dos.smartHomes.LogicalClock;
 
 
 public class OutletDeviceController {
@@ -47,11 +48,13 @@ public class OutletDeviceController {
         ChatFrame chatFrame;
         Client client;
         String name;
+        LogicalClock clock;
 
         public OutletDeviceController () {
         		outlet = new Outlet();
                 client = new Client();
                 client.start();
+                clock = new LogicalClock();
 
                 // For consistency, the classes to be sent over the network are
                 // registered by the same method for both the client and server.
@@ -65,6 +68,7 @@ public class OutletDeviceController {
                         }
 
                         public void received (Connection connection, Object object) {
+
                                 if (object instanceof UpdateNames) {
                                         UpdateNames updateNames = (UpdateNames)object;
                                         chatFrame.setNames(updateNames.names);
