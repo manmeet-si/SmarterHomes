@@ -18,10 +18,7 @@ public class LogicalClock {
 
     public long Compare(long otherTime)
     {
-        if(time<otherTime)
-            time = otherTime+1;
-        else
-            time++;
+        time = Math.max(time, otherTime) + 1;
         return time;
     }
 
@@ -29,4 +26,6 @@ public class LogicalClock {
     {
         return time;
     }
+    public String GetStringTime()
+    { return Long.toString(time);}
 }

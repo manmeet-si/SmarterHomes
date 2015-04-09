@@ -51,6 +51,7 @@ public class GatewayManager {
         boolean isHome;
         boolean doorStatus;
         boolean motionStatus;
+        LogicalClock clock;
         HashMap<String, Connection> map; // stores the connection of the devices along with device-names
         
         void pollTemperatureSensor(Connection tempConnector) {
@@ -58,8 +59,10 @@ public class GatewayManager {
         	java.util.TimerTask updates = new java.util.TimerTask() {
         		@Override
         		public void run() {
+                    clock.Event();
         			TemperatureSensorCommunicator communicator = new TemperatureSensorCommunicator();
         			communicator.text = "temperature-status";
+                    communicator.time = clock.GetStringTime();
                 	server.sendToTCP(map.get("TemperatureSensor").getID(), communicator);
                 	System.out.println("Gateway quering the temperature sensor");
         		}
@@ -69,6 +72,7 @@ public class GatewayManager {
         }
         
         void checkMotion(Connection connector) {
+
         	java.util.Timer timer = new java.util.Timer();
         	java.util.TimerTask updates = new java.util.TimerTask() {
         		@Override
@@ -76,11 +80,13 @@ public class GatewayManager {
         			count++;
         			if(count >= 60)
         			{
+                        clock.Event();
         				count = 0;
         				LightBulbDeviceCommunicator communicator = new LightBulbDeviceCommunicator();
         				communicator.text = "turn-off";
         				if (map.get("LightBulb") == null)
         					return;
+                        communicator.time = clock.GetStringTime();
         				server.sendToTCP(map.get("LightBulb").getID(), communicator);
         				System.out.println("Gateway messaging the light-bulb to be turned off!!!!");
         			}
@@ -93,6 +99,7 @@ public class GatewayManager {
         public GatewayManager () throws IOException {
         		map = new HashMap<String, Connection>();
         		isHome = true;
+            clock = new LogicalClock();
                 server = new Server() {
                         protected Connection newConnection () {
                                 // By providing our own connection implementation, we can store per
@@ -115,6 +122,8 @@ public class GatewayManager {
                                         // Ignore the object if a client has already registered a name. This is
                                         // impossible with our client, but a hacker could send messages at any time.
                                         if (connection.name != null) return;
+
+                                    clock.Compare(Long.parseLong(((RegisterName)object).time));
                                         // Ignore the object if the name is invalid.
                                         String name = ((RegisterName)object).name;
                                         if (name == null) return;
@@ -149,6 +158,8 @@ public class GatewayManager {
                                         if (connection.name == null) return;
                                         ChatMessage chatMessage = (ChatMessage)object;
                                         // Ignore the object if the chat message is invalid.
+
+                                        clock.Compare(Long.parseLong(chatMessage.time));
                                         String message = chatMessage.text;
                                         if (message == null) return;
                                         message = message.trim();
@@ -162,6 +173,8 @@ public class GatewayManager {
                                     // Ignore the object if a client tries to chat before registering a name.
                                     if (connection.name == null) return;
                                     MotionSensorCommunicator motionSensorCommunicator = (MotionSensorCommunicator)object;
+
+                                    clock.Compare(Long.parseLong(motionSensorCommunicator.time));
                                     // Ignore the object if the chat message is invalid.
                                     String message = motionSensorCommunicator.text;
                                     if (message == null) return;
@@ -169,6 +182,13 @@ public class GatewayManager {
                                     if (message.length() == 0) return;
                                     System.out.println("Recieved message from the motion sensor!");
                                     // Prepend the connection's name and send to everyone.
+
+                                    clock.Event();
+                                    DoorSensorCommunicator doorCommunicator = new DoorSensorCommunicator();
+                                    doorCommunicator.text = "get-status";
+                                    doorCommunicator.time = clock.GetStringTime();
+                                    server.sendToTCP(map.get("DoorSensor").getID(), doorCommunicator);
+                                    System.out.println("Gateway quering the door sensor");
                                     
                                     if(message.equalsIgnoreCase("HOME"))
                                     {
@@ -204,12 +224,21 @@ public class GatewayManager {
                                     // Ignore the object if a client tries to chat before registering a name.
                                     if (connection.name == null) return;
                                     DoorSensorCommunicator doorSensorCommunicator = (DoorSensorCommunicator)object;
+
+                                    clock.Compare(Long.parseLong(doorSensorCommunicator.time));
                                     // Ignore the object if the chat message is invalid.
                                     String message = doorSensorCommunicator.text;
                                     if (message == null) return;
                                     message = message.trim();
                                     if (message.length() == 0) return;
                                     System.out.println("Recieved message from the door sensor!");
+
+                                    clock.Event();
+                                    MotionSensorCommunicator motionCommunicator = new MotionSensorCommunicator();
+                                    motionCommunicator.text = "get-status";
+                                    motionCommunicator.time = clock.GetStringTime();
+                                    server.sendToTCP(map.get("MotionSensor").getID(), motionCommunicator);
+                                    System.out.println("Gateway quering the motion sensor");
                                     
                                     if(message.equalsIgnoreCase("DoorOpened"))
                                     {
@@ -236,6 +265,7 @@ public class GatewayManager {
                                     }
                                     String log = CurrentTime.getCurrentTime() + " Gateway/motion 1";
                                 	SmartHomesLogger logger = new SmartHomesLogger(log);
+                                    deviceCommunicator.time = clock.GetStringTime();
                                     server.sendToTCP(map.get("LightBulb").getID(), deviceCommunicator);
                                     //String log = CurrentTime.getCurrentTime() + " Gateway " + "LightBulb " + deviceCommunicator.text;
                                 	//SmartHomesLogger logger = new SmartHomesLogger(log);
@@ -246,6 +276,8 @@ public class GatewayManager {
                                     // Ignore the object if a client tries to chat before registering a name.
                                     if (connection.name == null) return;
                                     OutletDeviceCommunicator communicator = (OutletDeviceCommunicator)object;
+
+                                    clock.Compare(Long.parseLong(communicator.time));
                                     // Ignore the object if the chat message is invalid.
                                     String message = communicator.text;
                                     if (message == null) return;
@@ -255,7 +287,7 @@ public class GatewayManager {
                                     // Prepend the connection's name and send to everyone.
                                     MotionSensorCommunicator deviceCommunicator = new MotionSensorCommunicator();
                                     deviceCommunicator.text = message;
-                                   
+                                    deviceCommunicator.time = clock.GetStringTime();
                                  //   server.sendToAllTCP(deviceCommunicator);
                                     server.sendToTCP(map.get("TemperatureSensor").getID(), deviceCommunicator);
                                     String log = CurrentTime.getCurrentTime() + " Gateway " + "Outlet " + message;
@@ -266,6 +298,8 @@ public class GatewayManager {
                                     // Ignore the object if a client tries to chat before registering a name.
                                     if (connection.name == null) return;
                                     DatabaseCommunicator communicator = (DatabaseCommunicator)object;
+
+                                    clock.Compare(Long.parseLong(communicator.time));
                                     // Ignore the object if the chat message is invalid.
                                     String message = communicator.text;
                                     if (message == null) return;
@@ -282,6 +316,8 @@ public class GatewayManager {
                                     // Ignore the object if a client tries to chat before registering a name.
                                     if (connection.name == null) return;
                                     UpdateStatus status = (UpdateStatus)object;
+
+                                    clock.Compare(Long.parseLong(status.time));
                                     // Ignore the object if the chat message is invalid.
                                     String message = status.text;
                                     String name = status.name;
@@ -305,6 +341,7 @@ public class GatewayManager {
                                         	System.out.println("Outlet not running");
                                         	return;
                                         }
+                                        deviceCommunicator.time = clock.GetStringTime();
                                         server.sendToTCP(map.get("Outlet").getID(), deviceCommunicator);
                                         String log = CurrentTime.getCurrentTime() + " Gateway/temperature " + temp;
                                     	SmartHomesLogger logger = new SmartHomesLogger(log);
@@ -322,9 +359,11 @@ public class GatewayManager {
 						public void disconnected (Connection c) {
                                 ChatConnection connection = (ChatConnection)c;
                                 if (connection.name != null) {
+                                        clock.Event();
                                         // Announce to everyone that someone (with a registered name) has left.
                                         ChatMessage chatMessage = new ChatMessage();
                                         chatMessage.text = connection.name + " disconnected.";
+                                        chatMessage.time = clock.GetStringTime();
                                         server.sendToAllTCP(chatMessage);
                                         updateNames();
                                 }
@@ -364,6 +403,7 @@ public class GatewayManager {
 
         void updateNames () {
                 // Collect the names for each connection.
+                clock.Event();
                 Connection[] connections = server.getConnections();
                 ArrayList names = new ArrayList(connections.length);
                 for (int i = connections.length - 1; i >= 0; i--) {
@@ -373,6 +413,7 @@ public class GatewayManager {
                 // Send the names to everyone.
                 UpdateNames updateNames = new UpdateNames();
                 updateNames.names = (String[])names.toArray(new String[names.size()]);
+                updateNames.time = clock.GetStringTime();
                 server.sendToAllTCP(updateNames);
         }
 

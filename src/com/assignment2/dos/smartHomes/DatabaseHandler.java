@@ -54,8 +54,10 @@ public class DatabaseHandler {
         ChatFrame chatFrame;
         Client client;
         String name;
+        LogicalClock clock;
 
         private String handleGatewayMessage(String message, String component) {
+                clock.Event();
         	HashMap<String, List<String>> ret = null;
         	if (message.equalsIgnoreCase("status")) {
         		switch(component) {
@@ -96,6 +98,7 @@ public class DatabaseHandler {
 		}
 
 		public DatabaseHandler () {
+                clock = new LogicalClock();
         		db = new Database();
                 client = new Client();
                 client.start();
@@ -108,18 +111,22 @@ public class DatabaseHandler {
                         public void connected (Connection connection) {
                                 RegisterName registerName = new RegisterName();
                                 registerName.name = name;
+                                registerName.time = clock.GetStringTime();
                                 client.sendTCP(registerName);
                         }
 
                         public void received (Connection connection, Object object) {
                                 if (object instanceof UpdateNames) {
+
                                         UpdateNames updateNames = (UpdateNames)object;
+                                        clock.Compare(Long.parseLong(updateNames.time));
                                         chatFrame.setNames(updateNames.names);
                                         return;
                                 }
 
                                 if (object instanceof ChatMessage) {
                                         ChatMessage chatMessage = (ChatMessage)object;
+                                        clock.Compare(Long.parseLong(chatMessage.time));
                                         chatFrame.addMessage(chatMessage.text);
                                         return;
                                 }
@@ -128,6 +135,7 @@ public class DatabaseHandler {
                                 	GatewayCommunicator deviceCommunicator = (GatewayCommunicator)object;
                                 	String message = deviceCommunicator.text;
                                 	String component = deviceCommunicator.component;
+                                        clock.Compare(Long.parseLong(deviceCommunicator.time));
                                 	String response = handleGatewayMessage(message, component);
                                 	
                                 	System.out.println("Gateway sending the message of the Database handler : " + message);
@@ -135,6 +143,7 @@ public class DatabaseHandler {
                                 	chatFrame.addMessage("Sending response back to the gateway");
                                 	DatabaseCommunicator communicator = new DatabaseCommunicator();
                                 	communicator.text = response;
+                                        communicator.time = clock.GetStringTime();
                                 	client.sendTCP(communicator);
                                 	return;
                                 }
@@ -171,6 +180,7 @@ public class DatabaseHandler {
                         public void run () {
                         	DatabaseCommunicator communicator = new DatabaseCommunicator();
                         	communicator.text = chatFrame.getSendText();
+                                communicator.time = clock.GetStringTime();
                             client.sendTCP(communicator);
                         }
                 });

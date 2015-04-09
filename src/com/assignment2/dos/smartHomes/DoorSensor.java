@@ -53,11 +53,16 @@ public class DoorSensor extends Sensors {
     Client client;
     String name;
     boolean movement;
+        LogicalClock clock;
+
+
 	public DoorSensor() {
 		movement = false;
+            clock = new LogicalClock();
 	}
 
 	private void setDoorStatus(String s) {
+            clock.Event();
 		if (s.equalsIgnoreCase("false"))
 			movement = false;
 		else
@@ -71,8 +76,10 @@ public class DoorSensor extends Sensors {
 	public DoorSensor(int id, String sensorName) {
 		super(id, sensorName);
 		movement = false;
+            clock = new LogicalClock();
         client = new Client();
         client.start();
+            clock.Event();
 
         // For consistency, the classes to be sent over the network are
         // registered by the same method for both the client and server.
@@ -80,29 +87,37 @@ public class DoorSensor extends Sensors {
 
         client.addListener(new Listener() {
                 public void connected (Connection connection) {
+                        clock.Event();
                         RegisterName registerName = new RegisterName();
                         registerName.name = name;
                         client.sendTCP(registerName);
                 }
 
                 public void received (Connection connection, Object object) {
+                        clock.Event();
                         if (object instanceof UpdateNames) {
                                 UpdateNames updateNames = (UpdateNames)object;
+
+                                clock.Compare(Long.parseLong(updateNames.time));
                                 chatFrame.setNames(updateNames.names);
                                 return;
                         }
 
                         if (object instanceof ChatMessage) {
                                 ChatMessage chatMessage = (ChatMessage)object;
+                                clock.Compare(Long.parseLong(chatMessage.time));
                                 chatFrame.addMessage(chatMessage.text);
                                 return;
                         }
                         
                         if (object instanceof DoorSensorCommunicator) {
+
                         	DoorSensorCommunicator sensorCommunicator = (DoorSensorCommunicator)object;
+                                clock.Compare(Long.parseLong(sensorCommunicator.time));
                         	if (sensorCommunicator.text.equalsIgnoreCase("get-status") || sensorCommunicator.text.equalsIgnoreCase("status")) {
                         		DoorSensorCommunicator doorSensorCommunicator = new DoorSensorCommunicator();
                                 doorSensorCommunicator.text = getDoorStatus() + "" ;
+                                    doorSensorCommunicator.time = clock.GetStringTime();
                                 client.sendTCP(doorSensorCommunicator);
                             	chatFrame.addMessage("Gateway querying if any motion detected!");
 
@@ -141,8 +156,12 @@ public class DoorSensor extends Sensors {
         // This listener is called when the send button is clicked.
         chatFrame.setSendListener(new Runnable() {
                 public void run () {
+                        //Event
+                        clock.Event();
+
                         DoorSensorCommunicator doorSensorCommunicator = new DoorSensorCommunicator();
                         doorSensorCommunicator.text = chatFrame.getSendText();
+                        doorSensorCommunicator.time = clock.GetStringTime();
                         String log = CurrentTime.getCurrentTime() + " DoorSensor Gateway message:" + doorSensorCommunicator.text;
                     	SmartHomesLogger logger = new SmartHomesLogger(log);
                         
