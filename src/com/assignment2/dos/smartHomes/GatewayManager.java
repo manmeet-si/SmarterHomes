@@ -4,9 +4,12 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -15,6 +18,8 @@ import javax.swing.JFrame;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -23,6 +28,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import com.esotericsoftware.minlog.Log;
+import com.assignment2.dos.smartHomes.Node;
 import com.assignment2.dos.smartHomes.CurrentTime;
 import com.assignment2.dos.smartHomes.SmartHomesLogger;
 import com.assignment2.dos.smartHomes.Network.ChatMessage;
@@ -52,6 +58,8 @@ public class GatewayManager {
         boolean doorStatus;
         boolean motionStatus;
         HashMap<String, Connection> map; // stores the connection of the devices along with device-names
+        HashSet<String> connectionsList;
+        String leader;
         
         void pollTemperatureSensor(Connection tempConnector) {
         	java.util.Timer timer = new java.util.Timer();
@@ -92,6 +100,9 @@ public class GatewayManager {
         
         public GatewayManager () throws IOException {
         		map = new HashMap<String, Connection>();
+        		connectionsList = new HashSet<String>();
+        		connectionsList.add("GatewayManager");
+        		leader = null;
         		isHome = true;
                 server = new Server() {
                         protected Connection newConnection () {
@@ -130,7 +141,7 @@ public class GatewayManager {
                                         if (connection.name.equalsIgnoreCase("MotionSensor")) {
                                         	checkMotion(connection);
                                         }
-                                        
+                                        connectionsList.add(connection.name);
                                         System.out.println("" + connection.name + " registered with server");
                                         // Send a "connected" message to everyone except the new client.
                                         ChatMessage chatMessage = new ChatMessage();
@@ -138,6 +149,9 @@ public class GatewayManager {
                                         server.sendToAllExceptTCP(connection.getID(), chatMessage);
                                         // Send everyone a new list of connection names.
                                         updateNames();
+                                        if (connectionsList.size() >= 5) {
+                                        	electLeader();
+                                        }
                                         
                                         String log = CurrentTime.getCurrentTime() + " Gateway " + connection.name + " registered";
                                     	SmartHomesLogger logger = new SmartHomesLogger(log);
@@ -153,7 +167,7 @@ public class GatewayManager {
                                         if (message == null) return;
                                         message = message.trim();
                                         if (message.length() == 0) return;
-                                        // Prepend the connection's name and send to everyone.
+                                       // Prepend the connection's name and send to everyone.
                                         chatMessage.text = connection.name + ": " + message;
                                         server.sendToAllTCP(chatMessage);
                                         return;
@@ -315,7 +329,35 @@ public class GatewayManager {
                                
                         }
 
-                        private void resetCount() {
+                        private void electLeader() {
+                        	 InetAddress IP = null;
+							try {
+								IP = InetAddress.getLocalHost();
+							} catch (UnknownHostException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+                         
+							String ipAddress = null;
+                            if (IP != null)
+                            	ipAddress = IP.getHostAddress();
+                            try {
+								Node node = new Node("leader-election");
+								leader = node.getLeader(connectionsList);
+							} catch (RemoteException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+                            ChatMessage chatMessage = new ChatMessage();
+                            chatMessage.text = "New Leader: " + leader;
+                            System.out.println(chatMessage.text);
+
+                            server.sendToAllTCP(chatMessage);
+                            
+                            
+						}
+
+						private void resetCount() {
                         	count = 0;
 						}
 
@@ -325,7 +367,14 @@ public class GatewayManager {
                                         // Announce to everyone that someone (with a registered name) has left.
                                         ChatMessage chatMessage = new ChatMessage();
                                         chatMessage.text = connection.name + " disconnected.";
+                                        if (leader.equals(connection.name)) {
+                                        	System.out.println("Leader disconnected!");
+                                        	System.out.println("Re-electing leader");
+                                        }
+                                        connectionsList.remove(connection.name);
+                                        
                                         server.sendToAllTCP(chatMessage);
+                                        electLeader();
                                         updateNames();
                                 }
                         }
