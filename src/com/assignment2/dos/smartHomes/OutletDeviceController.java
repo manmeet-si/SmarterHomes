@@ -40,6 +40,7 @@ import com.assignment2.dos.smartHomes.Network.MotionSensorCommunicator;
 import com.assignment2.dos.smartHomes.Network.OutletDeviceCommunicator;
 import com.assignment2.dos.smartHomes.Network.RegisterName;
 import com.assignment2.dos.smartHomes.Network.UpdateNames;
+import com.assignment2.dos.smartHomes.LogicalClock;
 
 
 public class OutletDeviceController {
@@ -47,11 +48,13 @@ public class OutletDeviceController {
         ChatFrame chatFrame;
         Client client;
         String name;
+        LogicalClock clock;
 
         public OutletDeviceController () {
         		outlet = new Outlet();
                 client = new Client();
                 client.start();
+                clock = new LogicalClock();
 
                 // For consistency, the classes to be sent over the network are
                 // registered by the same method for both the client and server.
@@ -59,32 +62,39 @@ public class OutletDeviceController {
 
                 client.addListener(new Listener() {
                         public void connected (Connection connection) {
+                                clock.Event();
                                 RegisterName registerName = new RegisterName();
                                 registerName.name = name;
+                                registerName.time = clock.GetStringTime();
                                 client.sendTCP(registerName);
                         }
 
                         public void received (Connection connection, Object object) {
+
                                 if (object instanceof UpdateNames) {
                                         UpdateNames updateNames = (UpdateNames)object;
+                                        clock.Compare(Long.parseLong(updateNames.time));
                                         chatFrame.setNames(updateNames.names);
                                         return;
                                 }
 
                                 if (object instanceof ChatMessage) {
                                         ChatMessage chatMessage = (ChatMessage)object;
+                                        clock.Compare(Long.parseLong(chatMessage.time));
                                         chatFrame.addMessage(chatMessage.text);
                                         return;
                                 }
                                 
                                 if (object instanceof OutletDeviceCommunicator) {
                                 	OutletDeviceCommunicator deviceCommunicator = (OutletDeviceCommunicator)object;
+                                        clock.Compare(Long.parseLong(deviceCommunicator.time));
                                 	boolean statusSame = (deviceCommunicator.text.equalsIgnoreCase("turn-off") && outlet.getStatus().equals(State.OFF)) || 
                                 			(deviceCommunicator.text.equalsIgnoreCase("turn-on") && outlet.getStatus().equals(State.ON));
                                 	if (deviceCommunicator.text.equalsIgnoreCase("turn-off"))
                                 		outlet.turnOff();
                                 	else
                                 		outlet.turnOn();
+                                        clock.Event();
                                 	System.out.println("Gateway sending the message of the Temperature Sensor");
                                 	chatFrame.addMessage("Recieved message:" + deviceCommunicator.text + " from gateway.");
                                 	if (!statusSame)
@@ -125,8 +135,10 @@ public class OutletDeviceController {
                 // This listener is called when the send button is clicked.
                 chatFrame.setSendListener(new Runnable() {
                         public void run () {
+                                clock.Event();
                         	 OutletDeviceCommunicator outletDeviceCommunicator = new OutletDeviceCommunicator();
                         	 outletDeviceCommunicator.text = chatFrame.getSendText();
+                                outletDeviceCommunicator.time = clock.GetStringTime();
                              client.sendTCP(outletDeviceCommunicator);
 
                         }

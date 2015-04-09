@@ -46,11 +46,13 @@ public class LightBulbDeviceController {
         ChatFrame chatFrame;
         Client client;
         String name;
+        LogicalClock clock;
 
         public LightBulbDeviceController () {
         		bulb = new LightBulb();
                 client = new Client();
                 client.start();
+                clock = new LogicalClock();
 
                 // For consistency, the classes to be sent over the network are
                 // registered by the same method for both the client and server.
@@ -58,20 +60,24 @@ public class LightBulbDeviceController {
 
                 client.addListener(new Listener() {
                         public void connected (Connection connection) {
+                                clock.Event();
                                 RegisterName registerName = new RegisterName();
                                 registerName.name = name;
+                                registerName.time = clock.GetStringTime();
                                 client.sendTCP(registerName);
                         }
 
                         public void received (Connection connection, Object object) {
                                 if (object instanceof UpdateNames) {
                                         UpdateNames updateNames = (UpdateNames)object;
+                                        clock.Compare(Long.parseLong(updateNames.time));
                                         chatFrame.setNames(updateNames.names);
                                         return;
                                 }
 
                                 if (object instanceof ChatMessage) {
                                         ChatMessage chatMessage = (ChatMessage)object;
+                                        clock.Compare(Long.parseLong(chatMessage.time));
                                         chatFrame.addMessage(chatMessage.text);
                                         return;
                                 }
@@ -92,12 +98,14 @@ public class LightBulbDeviceController {
                                 */
                                 if (object instanceof LightBulbDeviceCommunicator) {
                                 	LightBulbDeviceCommunicator deviceCommunicator = (LightBulbDeviceCommunicator)object;
+                                        clock.Compare(Long.parseLong(deviceCommunicator.time));
                                 	boolean statusSame = (deviceCommunicator.text.equalsIgnoreCase("turn-off") && bulb.getStatus().equals(State.OFF)) || 
                                 			(deviceCommunicator.text.equalsIgnoreCase("turn-on") && bulb.getStatus().equals(State.ON));
                                 	if (deviceCommunicator.text.equalsIgnoreCase("turn-off"))
                                 		bulb.turnOff();
                                 	else
                                 		bulb.turnOn();
+                                        clock.Event();
                                 	System.out.println("Gateway sending the message of the Motion Sensor");
                                 	chatFrame.addMessage("Recieved message:" + deviceCommunicator.text + " from gateway.");
                                 	if (!statusSame)
@@ -139,6 +147,7 @@ public class LightBulbDeviceController {
                         public void run () {
                         	LightBulbDeviceCommunicator deviceCommunicator = new LightBulbDeviceCommunicator();
                        	 	deviceCommunicator.text = chatFrame.getSendText();
+                                deviceCommunicator.time = clock.GetStringTime();
                             client.sendTCP(deviceCommunicator);
                         }
                 });

@@ -48,6 +48,7 @@ public class MotionSensor extends Sensors {
 	ChatFrame chatFrame;
     Client client;
     String name;
+        LogicalClock clock;
     boolean movement;
 	public MotionSensor() {
 		movement = false;
@@ -61,7 +62,8 @@ public class MotionSensor extends Sensors {
 	}
 	
 	private boolean getMotion() {
-		return movement;
+		clock.Event();
+            return movement;
 	}
 	
 	public MotionSensor(int id, String sensorName) {
@@ -69,6 +71,7 @@ public class MotionSensor extends Sensors {
 		movement = false;
         client = new Client();
         client.start();
+            clock = new LogicalClock();
 
         // For consistency, the classes to be sent over the network are
         // registered by the same method for both the client and server.
@@ -76,29 +79,35 @@ public class MotionSensor extends Sensors {
 
         client.addListener(new Listener() {
                 public void connected (Connection connection) {
+                        clock.Event();
                         RegisterName registerName = new RegisterName();
                         registerName.name = name;
+                        registerName.time = clock.GetStringTime();
                         client.sendTCP(registerName);
                 }
 
                 public void received (Connection connection, Object object) {
                         if (object instanceof UpdateNames) {
                                 UpdateNames updateNames = (UpdateNames)object;
+                                clock.Compare(Long.parseLong(updateNames.time));
                                 chatFrame.setNames(updateNames.names);
                                 return;
                         }
 
                         if (object instanceof ChatMessage) {
                                 ChatMessage chatMessage = (ChatMessage)object;
+                                clock.Compare(Long.parseLong(chatMessage.time));
                                 chatFrame.addMessage(chatMessage.text);
                                 return;
                         }
                         
                         if (object instanceof MotionSensorCommunicator) {
                         	MotionSensorCommunicator sensorCommunicator = (MotionSensorCommunicator)object;
+                                clock.Compare(Long.parseLong(sensorCommunicator.time));
                         	if (sensorCommunicator.text.equalsIgnoreCase("get-status") || sensorCommunicator.text.equalsIgnoreCase("status")) {
                         		MotionSensorCommunicator motionSensorCommunicator = new MotionSensorCommunicator();
                                 motionSensorCommunicator.text = getMotion() + "" ;
+                                    motionSensorCommunicator.time = clock.GetStringTime();
                                 client.sendTCP(motionSensorCommunicator);
                             	chatFrame.addMessage("Outlet Device querying if any motion detected!");
 
@@ -137,8 +146,10 @@ public class MotionSensor extends Sensors {
         // This listener is called when the send button is clicked.
         chatFrame.setSendListener(new Runnable() {
                 public void run () {
+                        clock.Event();
                         MotionSensorCommunicator motionSensorCommunicator = new MotionSensorCommunicator();
                         motionSensorCommunicator.text = chatFrame.getSendText();
+                        motionSensorCommunicator.time = clock.GetStringTime();
                         String log = CurrentTime.getCurrentTime() + " MotionSensor Gateway message:" + motionSensorCommunicator.text;
                     	SmartHomesLogger logger = new SmartHomesLogger(log);
                         
