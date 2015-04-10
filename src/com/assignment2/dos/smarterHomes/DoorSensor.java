@@ -374,7 +374,7 @@ public class DoorSensor extends Sensors {
 
                 }
                 System.out.println("file read complete!");
-                ArrayList<String> sensorEvents = map.get("Motion");
+                ArrayList<String> sensorEvents = map.get("Door");
                 ArrayList<String> time = map.get("Time");
                 for (int i = 0 ; i < sensorEvents.size(); i++) {
                     String event = sensorEvents.get(i).toLowerCase();

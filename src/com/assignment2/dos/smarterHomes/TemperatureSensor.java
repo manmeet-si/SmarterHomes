@@ -383,22 +383,19 @@ public class TemperatureSensor extends Sensors {
 
                         }
                         System.out.println("file read complete!");
-                        ArrayList<String> sensorEvents = map.get("Motion");
+                        ArrayList<String> sensorEvents = map.get("Temperature");
                         ArrayList<String> time = map.get("Time");
                         for (int i = 0 ; i < sensorEvents.size(); i++) {
                                 String event = sensorEvents.get(i).toLowerCase();
                                 for (int wait = 0; wait < 1000000000; wait++) {
                                         ; // wait for a moment
                                 }
+                                try {
+                                	manager.setTemperature(Double.parseDouble(sensorEvents.get(i)));
+                                } catch(NumberFormatException nexp){
+                                	System.out.println("Improper input to temperature");
+                                }
                                 // call the temperature sensor
-                                manager.clock.Event();
-                                Network.TemperatureSensorCommunicator communicator = new Network.TemperatureSensorCommunicator();
-                                if(sensorEvents.get(i).equalsIgnoreCase("1"))
-                                        communicator.text = "true";
-                                else
-                                        communicator.text = "false";
-                                communicator.time = time.get(i);
-                                manager.client.sendTCP(communicator);
                                 System.out.println("Temperature Sensor sending status to Gateway");
                                 SmartHomesLogger logger = new SmartHomesLogger("Temperature Sensor sending status to Gateway");
 

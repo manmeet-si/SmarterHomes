@@ -366,7 +366,7 @@ public class MotionSensor extends Sensors {
                                 }
                                 // call the temperature sensor
                                 manager.clock.Event();
-                                Network.TemperatureSensorCommunicator communicator = new Network.TemperatureSensorCommunicator();
+                                MotionSensorCommunicator communicator = new MotionSensorCommunicator();
                                 if(sensorEvents.get(i).equalsIgnoreCase("1"))
                                         communicator.text = "true";
                                 else
