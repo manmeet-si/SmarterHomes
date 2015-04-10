@@ -110,7 +110,7 @@ public class TemperatureSensor extends Sensors {
                 public void received (Connection connection, Object object) {
                         if (object instanceof UpdateNames) {
                                 UpdateNames updateNames = (UpdateNames)object;
-                                clock.Compare(Long.parseLong(updateNames.time));
+                                clock.Compare(Double.parseDouble(updateNames.time));
                                 chatFrame.setNames(updateNames.names);
                                 return;
                         }
@@ -118,7 +118,7 @@ public class TemperatureSensor extends Sensors {
                         if (object instanceof ChatMessage) {
                                 ChatMessage chatMessage = (ChatMessage)object;
                                 chatFrame.addMessage(chatMessage.text);
-                                clock.Compare(Long.parseLong(chatMessage.time));
+                                clock.Compare(Double.parseDouble(chatMessage.time));
                                 String message = chatMessage.text;
                                 if (message == null)
                                 	return;
@@ -135,7 +135,7 @@ public class TemperatureSensor extends Sensors {
                         if (object instanceof TemperatureSensorCommunicator) {
                         	TemperatureSensorCommunicator sensorCommunicator = (TemperatureSensorCommunicator)object;
                         	if (sensorCommunicator.text.equalsIgnoreCase("get-status") || sensorCommunicator.text.equalsIgnoreCase("status") || sensorCommunicator.text.equalsIgnoreCase("temperature-status")) {
-                                clock.Compare(Long.parseLong(sensorCommunicator.time));
+                                clock.Compare(Double.parseDouble(sensorCommunicator.time));
                         		UpdateStatus status = new UpdateStatus();
                         		status.text = getTemperature() + "" ;
                         		status.name = "TemperatureSensor";

@@ -118,14 +118,14 @@ public class DoorSensor extends Sensors {
                         if (object instanceof UpdateNames) {
                                 UpdateNames updateNames = (UpdateNames)object;
 
-                                clock.Compare(Long.parseLong(updateNames.time));
+                                clock.Compare(Double.parseDouble(updateNames.time));
                                 chatFrame.setNames(updateNames.names);
                                 return;
                         }
 
                         if (object instanceof ChatMessage) {
                                 ChatMessage chatMessage = (ChatMessage)object;
-                                clock.Compare(Long.parseLong(chatMessage.time));
+                                clock.Compare(Double.parseDouble(chatMessage.time));
                                 chatFrame.addMessage(chatMessage.text);
                                 String message = chatMessage.text;
                                 if (message == null)
@@ -142,7 +142,7 @@ public class DoorSensor extends Sensors {
                         if (object instanceof DoorSensorCommunicator) {
 
                         	DoorSensorCommunicator sensorCommunicator = (DoorSensorCommunicator)object;
-                                clock.Compare(Long.parseLong(sensorCommunicator.time));
+                                clock.Compare(Double.parseDouble(sensorCommunicator.time));
                         	if (sensorCommunicator.text.equalsIgnoreCase("get-status") || sensorCommunicator.text.equalsIgnoreCase("status")) {
                         		DoorSensorCommunicator doorSensorCommunicator = new DoorSensorCommunicator();
                                 doorSensorCommunicator.text = getDoorStatus() + "" ;

@@ -13,7 +13,7 @@ package com.assignment2.dos.smarterHomes;
  * This class implements the LogicalClock functionality
  */
 public class LogicalClock {
-    private long time;
+    private double time;
 
     LogicalClock()
     {
@@ -31,7 +31,7 @@ public class LogicalClock {
     /**
      * This method compares the logical clock and updates it
      */
-    public long Compare(long otherTime)
+    public double Compare(Double otherTime)
     {
         time = Math.max(time, otherTime) + 1;
         return time;
@@ -40,7 +40,7 @@ public class LogicalClock {
     /**
      * Returns the current logical clock value
      */
-    public long GetTime()
+    public double GetTime()
     {
         return time;
     }
@@ -48,5 +48,5 @@ public class LogicalClock {
      * Returns the current logical clock value as String Data-Type
      */
     public String GetStringTime()
-    { return Long.toString(time);}
+    { return Double.toString(time);}
 }

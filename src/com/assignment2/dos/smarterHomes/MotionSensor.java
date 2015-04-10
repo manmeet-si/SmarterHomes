@@ -104,14 +104,14 @@ public class MotionSensor extends Sensors {
                 public void received (Connection connection, Object object) {
                         if (object instanceof UpdateNames) {
                                 UpdateNames updateNames = (UpdateNames)object;
-                                clock.Compare(Long.parseLong(updateNames.time));
+                                clock.Compare(Double.parseDouble(updateNames.time));
                                 chatFrame.setNames(updateNames.names);
                                 return;
                         }
 
                         if (object instanceof ChatMessage) {
                                 ChatMessage chatMessage = (ChatMessage)object;
-                                clock.Compare(Long.parseLong(chatMessage.time));
+                                clock.Compare(Double.parseDouble(chatMessage.time));
                                 chatFrame.addMessage(chatMessage.text);
                                 String message = chatMessage.text;
                                 if (message == null)
@@ -128,7 +128,7 @@ public class MotionSensor extends Sensors {
                         
                         if (object instanceof MotionSensorCommunicator) {
                         	MotionSensorCommunicator sensorCommunicator = (MotionSensorCommunicator)object;
-                                clock.Compare(Long.parseLong(sensorCommunicator.time));
+                                clock.Compare(Double.parseDouble(sensorCommunicator.time));
                         	if (sensorCommunicator.text.equalsIgnoreCase("get-status") || sensorCommunicator.text.equalsIgnoreCase("status")) {
                         		MotionSensorCommunicator motionSensorCommunicator = new MotionSensorCommunicator();
                                 motionSensorCommunicator.text = getMotion() + "" ;

@@ -127,14 +127,14 @@ public class DatabaseHandler {
                                 if (object instanceof UpdateNames) {
 
                                         UpdateNames updateNames = (UpdateNames)object;
-                                        clock.Compare(Long.parseLong(updateNames.time));
+                                        clock.Compare(Double.parseDouble(updateNames.time));
                                         chatFrame.setNames(updateNames.names);
                                         return;
                                 }
 
                                 if (object instanceof ChatMessage) {
                                         ChatMessage chatMessage = (ChatMessage)object;
-                                        clock.Compare(Long.parseLong(chatMessage.time));
+                                        clock.Compare(Double.parseDouble(chatMessage.time));
                                         chatFrame.addMessage(chatMessage.text);
                                         return;
                                 }
@@ -143,7 +143,7 @@ public class DatabaseHandler {
                                 	GatewayCommunicator deviceCommunicator = (GatewayCommunicator)object;
                                 	String message = deviceCommunicator.text;
                                 	String component = deviceCommunicator.component;
-                                        clock.Compare(Long.parseLong(deviceCommunicator.time));
+                                        clock.Compare(Double.parseDouble(deviceCommunicator.time));
                                 	String response = handleGatewayMessage(message, component);
                                 	
                                 	System.out.println("Gateway sending the message of the Database handler : " + message);
@@ -160,7 +160,7 @@ public class DatabaseHandler {
                                 	UpdateDataBase updateDataBase = (UpdateDataBase)object;
                                 	String message = updateDataBase.text;
                                 	String component = updateDataBase.component;
-                                    clock.Compare(Long.parseLong(updateDataBase.time));
+                                    clock.Compare(Double.parseDouble(updateDataBase.time));
                                 	String time = clock.GetStringTime();
                                 	db.PutStatus(component, message, time);
                                 	return;

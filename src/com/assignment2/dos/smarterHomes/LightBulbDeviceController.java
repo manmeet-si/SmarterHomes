@@ -75,7 +75,7 @@ public class LightBulbDeviceController {
                         public void received (Connection connection, Object object) {
                                 if (object instanceof UpdateNames) {
                                         UpdateNames updateNames = (UpdateNames)object;
-                                        clock.Compare(Long.parseLong(updateNames.time));
+                                        clock.Compare(Double.parseDouble(updateNames.time));
                                         chatFrame.setNames(updateNames.names);
                                         return;
                                 }
@@ -83,7 +83,7 @@ public class LightBulbDeviceController {
                                 if (object instanceof ChatMessage) {
                                         ChatMessage chatMessage = (ChatMessage)object;
                                         try {
-                                        	clock.Compare(Long.parseLong(chatMessage.time));
+                                        	clock.Compare(Double.parseDouble(chatMessage.time));
                                         } catch(Exception e) {};                                        chatFrame.addMessage(chatMessage.text);
                                         String message = chatMessage.text;
                                         if (message == null)
@@ -101,7 +101,7 @@ public class LightBulbDeviceController {
                              
                                 if (object instanceof LightBulbDeviceCommunicator) {
                                 	LightBulbDeviceCommunicator deviceCommunicator = (LightBulbDeviceCommunicator)object;
-                                        clock.Compare(Long.parseLong(deviceCommunicator.time));
+                                        clock.Compare(Double.parseDouble(deviceCommunicator.time));
                                 	boolean statusSame = (deviceCommunicator.text.equalsIgnoreCase("turn-off") && bulb.getStatus().equals(State.OFF)) || 
                                 			(deviceCommunicator.text.equalsIgnoreCase("turn-on") && bulb.getStatus().equals(State.ON));
                                 	if (deviceCommunicator.text.equalsIgnoreCase("turn-off"))
