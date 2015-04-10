@@ -1,0 +1,4 @@
+00:00 DEBUG: [kryonet] Accepting connections on port: 0.0.0.0/0.0.0.0:65320/TCP
+00:00  INFO: [kryonet] Server opened.
+01:39:16 Server Running!
+02:19  INFO: [kryonet] Server closed.

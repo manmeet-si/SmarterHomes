@@ -1,0 +1,35 @@
+03:07:55 Server Running!
+reading file:test-input.csv
+
+print line:Time,Temperature,Motion,Gateway
+Time,Temperature,Motion,Gateway
+print line:0,Register,Register,
+print line:1,0,0,Q(Temp)
+print line:2,1,0,Q(Temp);Q(Motion)
+print line:3,1,0,
+print line:3.2,1,1,
+print line:5,2,0,Q(Temp)
+print line:6,2,0,
+print line:7,2,0,Q(Motion)
+print line:8,1,0,
+print line:9,1,0,
+print line:10,1,0,Q(Temp)
+print line:11,1,1,
+print line:12,1,0,Q(Motion)
+print line:13,1,1,
+print line:14,2,1,Q(Temp)
+print line:15,2,1,Q(Temp)
+file read complete!
+Temperature Sensor not registerd
+Temperature Sensor not registerd
+Motion Sensor not registerd
+Temperature Sensor not registerd
+Motion Sensor not registerd
+Temperature Sensor not registerd
+Motion Sensor not registerd
+Temperature Sensor not registerd
+Temperature Sensor not registerd
+MotionSensor registered with server
+Recieved message from the motion sensor!
+leader-election
+New Leader:GatewayManager
