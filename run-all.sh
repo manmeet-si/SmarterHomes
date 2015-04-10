@@ -3,4 +3,5 @@ java -classpath  SmarterHomes.jar com.assignment2.dos.smarterHomes.DatabaseHandl
 java -classpath  SmarterHomes.jar com.assignment2.dos.smarterHomes.MotionSensor test-input.csv &
 java -classpath  SmarterHomes.jar com.assignment2.dos.smarterHomes.TemperatureSensor test-input.csv &
 java -classpath  SmarterHomes.jar com.assignment2.dos.smarterHomes.OutletDeviceController test-input.csv &
+java -classpath  SmarterHomes.jar com.assignment2.dos.smarterHomes.DoorSensor test-input.csv &
 java -classpath  SmarterHomes.jar com.assignment2.dos.smarterHomes.LightBulbDeviceController test-input.csv &
