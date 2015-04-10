@@ -18,7 +18,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
@@ -346,8 +350,58 @@ public class TemperatureSensor extends Sensors {
                 }
         }
 
-        public static void main (String[] args) {
+        public static void main (String[] args) throws IOException {
                 Log.set(Log.LEVEL_DEBUG);
-                new TemperatureSensor(1, "temperature-sensor");
+                TemperatureSensor manager =  new TemperatureSensor(1, "temperature-sensor");
+                if (args.length > 1 && args[1] != null) {
+                        System.out.println("reading file:" + args[1] + "\n");
+                        BufferedReader br = new BufferedReader(new FileReader(args[1]));
+                        String line = null;
+                        String firstLine = null;
+                        String [] components = {"Motion", "Temperature", "Gateway", "Door", "Outlet", "Bulb", "Time"};
+                        String []csvComponents = null;
+                        HashMap<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
+                        while ((line = br.readLine()) != null) {
+                                System.out.println("print line:" + line);
+                                String []tmp = line.split(",");
+                                if (firstLine == null) {
+                                        firstLine = line;
+                                        System.out.println(firstLine);
+                                        csvComponents = tmp;
+                                        continue;
+                                }
+                                for (int i = 0; i < tmp.length; i++) {
+                                        String component = csvComponents[i];
+                                        ArrayList<String> list = map.get(component);
+                                        if (list == null)
+                                                list = new ArrayList<String>();
+                                        list.add(tmp[i]);
+                                        map.put(component, list);
+                                }
+
+                        }
+                        System.out.println("file read complete!");
+                        ArrayList<String> sensorEvents = map.get("Motion");
+                        ArrayList<String> time = map.get("Time");
+                        for (int i = 0 ; i < sensorEvents.size(); i++) {
+                                String event = sensorEvents.get(i).toLowerCase();
+                                for (int wait = 0; wait < 1000000000; wait++) {
+                                        ; // wait for a moment
+                                }
+                                // call the temperature sensor
+                                manager.clock.Event();
+                                Network.TemperatureSensorCommunicator communicator = new Network.TemperatureSensorCommunicator();
+                                if(sensorEvents.get(i).equalsIgnoreCase("1"))
+                                        communicator.text = "true";
+                                else
+                                        communicator.text = "false";
+                                communicator.time = time.get(i);
+                                manager.client.sendTCP(communicator);
+                                System.out.println("Motion Sensor sending status to Gateway");
+                                SmartHomesLogger logger = new SmartHomesLogger("Motion Sensor sending status to Gateway");
+
+
+                        }
+                }
         }
 }

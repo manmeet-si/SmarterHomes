@@ -272,6 +272,8 @@ public class GatewayManager {
                                     	isHome = false;
                                     	return;
                                     }
+                                    else if(message.equalsIgnoreCase("false"))
+                                        return;
                                     if(!isHome)
                                     {
                                     	//JOptionPane.showMessageDialog(null, "Someone is at home!");
@@ -324,6 +326,8 @@ public class GatewayManager {
                                     	isHome = false;
                                     	return;
                                     }
+                                    else if(message.equalsIgnoreCase("false"))
+                                        return;
                                     if(!isHome)
                                     {
                                     	//JOptionPane.showMessageDialog(null, "Someone is at home!");
