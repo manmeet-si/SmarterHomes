@@ -355,9 +355,9 @@ public class TemperatureSensor extends Sensors {
         public static void main (String[] args) throws IOException {
                 Log.set(Log.LEVEL_DEBUG);
                 TemperatureSensor manager =  new TemperatureSensor(1, "temperature-sensor");
-                if (args.length > 1 && args[1] != null) {
-                        System.out.println("reading file:" + args[1] + "\n");
-                        BufferedReader br = new BufferedReader(new FileReader(args[1]));
+                if (args.length > 0 && args[0] != null) {
+                        System.out.println("reading file:" + args[0] + "\n");
+                        BufferedReader br = new BufferedReader(new FileReader(args[0]));
                         String line = null;
                         String firstLine = null;
                         String [] components = {"Motion", "Temperature", "Gateway", "Door", "Outlet", "Bulb", "Time"};
@@ -382,9 +382,13 @@ public class TemperatureSensor extends Sensors {
                                 }
 
                         }
+                        
                         System.out.println("file read complete!");
                         ArrayList<String> sensorEvents = map.get("Temperature");
                         ArrayList<String> time = map.get("Time");
+                        for (int wait = 0; wait < 1000000000; wait++) {
+                            ; // wait for a moment
+                        }
                         for (int i = 0 ; i < sensorEvents.size(); i++) {
                                 String event = sensorEvents.get(i).toLowerCase();
                                 for (int wait = 0; wait < 1000000000; wait++) {

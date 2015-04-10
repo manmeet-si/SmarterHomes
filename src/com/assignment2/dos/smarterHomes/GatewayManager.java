@@ -565,9 +565,9 @@ public class GatewayManager {
                 Log.set(Log.LEVEL_DEBUG);
 
                 GatewayManager manager = new GatewayManager();
-                if (args.length > 1 && args[1] != null) {
+                if (args.length > 0 && args[0] != null) {
                 System.out.println("reading file:" + args[1] + "\n");
-                BufferedReader br = new BufferedReader(new FileReader(args[1]));
+                BufferedReader br = new BufferedReader(new FileReader(args[0]));
                 String line = null;
                 String firstLine = null;
                 String [] components = {"Motion", "Temperature", "Gateway", "Door", "Outlet", "Bulb", "Time"};
