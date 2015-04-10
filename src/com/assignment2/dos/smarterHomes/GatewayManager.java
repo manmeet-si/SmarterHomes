@@ -93,6 +93,7 @@ public class GatewayManager {
          * 
          * Checks if motion detected and communicates to the LightBulb
          */
+
         void checkMotion(Connection connector) {
 
         	java.util.Timer timer = new java.util.Timer();
@@ -110,14 +111,14 @@ public class GatewayManager {
         					return;
                         communicator.time = clock.GetStringTime();
         				server.sendToTCP(map.get("LightBulb").getID(), communicator);
-        				System.out.println("Gateway messaging the light-bulb to be turned off!!!!");
+        				System.out.println("No motion for 3 minutes, turning light off!!!!");
         			}
         		}
         	};
         	timer.scheduleAtFixedRate(updates, new Date(), 5000);
         	
         }
-        
+
         /**
          * 
          * @param component
@@ -176,7 +177,7 @@ public class GatewayManager {
                                         // impossible with our client, but a hacker could send messages at any time.
                                         if (connection.name != null) return;
 
-                                        clock.Compare(Double.parseDouble(((RegisterName)object).time));
+                                        clock.Compare(Double.parseDouble(((RegisterName) object).time));
                                         // Ignore the object if the name is invalid.
                                         String name = ((RegisterName)object).name;
                                         if (name == null) return;
@@ -272,8 +273,11 @@ public class GatewayManager {
                                     	isHome = false;
                                     	return;
                                     }
-                                    else if(message.equalsIgnoreCase("false"))
+                                    else if(message.equalsIgnoreCase("false")) {
+                                        motionStatus = false;
                                         return;
+                                    }
+                                    motionStatus = true;
                                     if(!isHome)
                                     {
                                     	//JOptionPane.showMessageDialog(null, "Someone is at home!");
@@ -281,6 +285,8 @@ public class GatewayManager {
                                     	SmartHomesLogger logger = new SmartHomesLogger("ALERT!! Someone is at home!");
                                     	return;
                                     }
+                                    if(doorStatus == false)
+                                        return;
                                     resetCount();
                                     LightBulbDeviceCommunicator deviceCommunicator = new LightBulbDeviceCommunicator();
                                     deviceCommunicator.text = "turn-on";
@@ -327,8 +333,11 @@ public class GatewayManager {
                                     	isHome = false;
                                     	return;
                                     }
-                                    else if(message.equalsIgnoreCase("false"))
+                                    else if(message.equalsIgnoreCase("false")){
+                                        doorStatus = false;
                                         return;
+                                    }
+                                    doorStatus = true;
                                     if(!isHome)
                                     {
                                     	//JOptionPane.showMessageDialog(null, "Someone is at home!");
@@ -336,6 +345,8 @@ public class GatewayManager {
                                     	
                                     	return;
                                     }
+                                    if(!motionStatus)
+                                        return;
                                     resetCount();
                                     LightBulbDeviceCommunicator deviceCommunicator = new LightBulbDeviceCommunicator();
                                     deviceCommunicator.text = "turn-on";
