@@ -252,7 +252,7 @@ public class GatewayManager {
                                     clock.Event();
                                     updateDataBase("MotionSensor", "motion-detected");
                                     DoorSensorCommunicator doorCommunicator = new DoorSensorCommunicator();
-                                    doorCommunicator.text = "get-status";
+                                    doorCommunicator.text = "SYNC";
                                     doorCommunicator.time = clock.GetStringTime();
                                     if (map.get("DoorSensor") == null) {
                                     	System.out.println("Door Sensor not registered yet!");
@@ -311,7 +311,7 @@ public class GatewayManager {
 
                                     clock.Event();
                                     MotionSensorCommunicator motionCommunicator = new MotionSensorCommunicator();
-                                    motionCommunicator.text = "get-status";
+                                    motionCommunicator.text = "SYNC";
                                     motionCommunicator.time = clock.GetStringTime();
                                     server.sendToTCP(map.get("MotionSensor").getID(), motionCommunicator);
                                     System.out.println("Gateway quering the motion sensor");
