@@ -40,7 +40,10 @@ import com.assignment2.dos.smarterHomes.Network.OutletDeviceCommunicator;
 import com.assignment2.dos.smarterHomes.Network.RegisterName;
 import com.assignment2.dos.smarterHomes.Network.UpdateNames;
 
-
+/*
+ * LightBulbDeviceController acts as client and communicates with the gateway and changes state of LightBulb object if motion detected
+ * Also it participates in leader election
+ */
 public class LightBulbDeviceController {
 		LightBulb bulb;
         ChatFrame chatFrame;

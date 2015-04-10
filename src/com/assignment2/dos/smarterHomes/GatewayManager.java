@@ -126,7 +126,7 @@ public class GatewayManager {
         	SmartHomesLogger logger = new SmartHomesLogger("Gateway sending update to database");
 		}
         /*
-         * Creates instance of GatewayManager
+         * GatewayManager default constructor: Creates instance of GatewayManager
          */
         public GatewayManager () throws IOException {
         		map = new HashMap<String, Connection>();
@@ -453,7 +453,7 @@ public class GatewayManager {
 						private void resetCount() {
                         	count = 0;
 						}
-
+						
 						public void disconnected (Connection c) {
                                 ChatConnection connection = (ChatConnection)c;
                                 if (connection.name != null) {
@@ -506,6 +506,9 @@ public class GatewayManager {
 
         }
 
+        /*
+         * Checks for the connection updates
+         */
         void updateNames () {
                 // Collect the names for each connection.
                 clock.Event();

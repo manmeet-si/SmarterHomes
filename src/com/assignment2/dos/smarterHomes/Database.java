@@ -70,7 +70,9 @@ public class Database {
         }
     }
 
-    //Put the given status of the provided sensor in the database
+    /*
+     * Put the given status of the provided sensor in the database
+     */
     public boolean PutStatus(String sensor, String status, String time)
     {
         try {
@@ -98,8 +100,10 @@ public class Database {
         return false;
     }
 
-    //Put the given status of the provided sensor in the database without time
-    //If no time provided, save as '--'
+    /*
+     * Put the given status of the provided sensor in the database without time
+     * If no time provided, save as '--'
+    */
     public boolean PutStatus(String sensor, String status)
     {
         try {
@@ -127,7 +131,9 @@ public class Database {
         return false;
     }
 
-    // return status of all: devices and components
+    /*
+     *  return status of all: devices and components
+     */
     public HashMap<String, List<String>> GetAll()
     {
         HashMap<String, List<String>> status = new HashMap<String, List<String>>();
@@ -161,7 +167,9 @@ public class Database {
     }
 
 
-    //Method to get the complete history of a particular sensor
+    /*
+     * Method to get the complete history of a particular sensor
+     */
     public HashMap<String, List<String>> GetHistory(String sensor)
     {
         HashMap<String, List<String>> status = new HashMap<String, List<String>>();
@@ -204,7 +212,9 @@ public class Database {
         return null;
     }
 
-    //Method to get the latest status of sensor
+    /*
+     * Method to get the latest status of sensor
+     */
     public HashMap<String, List<String>> GetCurrentStatus(String sensorName)
     {
         HashMap<String, List<String>> status = new HashMap<String, List<String>>();
@@ -235,7 +245,9 @@ public class Database {
     }
 
 
-    //Method to get the complete history of all sensors
+    /*
+     * Method to get the complete history of all sensors
+     */
     public HashMap<String, List<String>> GetAllHistory()
     {
         HashMap<String, List<String>> status = new HashMap<String, List<String>>();

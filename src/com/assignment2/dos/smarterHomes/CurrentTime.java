@@ -13,9 +13,11 @@ import java.util.Calendar;
  * using the calendar class provided in java utils library
  * and return in Hours:Minute:Seconds format
  */
-
 public class CurrentTime {
 
+	/*
+	 * Reports the current time in "HH:mm:ss" format
+	 */
     public static String getCurrentTime() {
     	Calendar cal = Calendar.getInstance();
     	cal.getTime();

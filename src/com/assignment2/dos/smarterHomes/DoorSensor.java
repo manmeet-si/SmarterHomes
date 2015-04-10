@@ -57,12 +57,17 @@ public class DoorSensor extends Sensors {
 
     LogicalClock clock;
 
-
+    /*
+     * Default Constructor for the DoorSensor class
+     */
 	public DoorSensor() {
 		movement = false;
-            clock = new LogicalClock();
+        clock = new LogicalClock();
 	}
 
+	/*
+	 * method to set the door on or off
+	 */
 	private void setDoorStatus(String s) {
             clock.Event();
 		if (s.equalsIgnoreCase("false"))
@@ -71,10 +76,16 @@ public class DoorSensor extends Sensors {
 			movement = true;
 	}
 	
+	/*
+	 * method returning the current status of the door
+	 */
 	private boolean getDoorStatus() {
 		return movement;
 	}
 	
+	/*
+	 * Parameterized Constructor for the door class taking the door id and the name of the door sensor
+	 */
 	public DoorSensor(int id, String sensorName) {
 		super(id, sensorName);
 		movement = false;

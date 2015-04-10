@@ -42,7 +42,10 @@ import com.assignment2.dos.smarterHomes.Network.OutletDeviceCommunicator;
 import com.assignment2.dos.smarterHomes.Network.RegisterName;
 import com.assignment2.dos.smarterHomes.Network.UpdateNames;
  
+/*
+ *  * MotionSensor class is based on push model and extends from Sensor and communicates motion-detection to the gateway.
 
+ */
 public class MotionSensor extends Sensors {
 
 	ChatFrame chatFrame;
@@ -55,6 +58,7 @@ public class MotionSensor extends Sensors {
 		movement = false;
 	}
 
+	
 	private void setMotion(String s) {
 		if (s.equalsIgnoreCase("false"))
 			movement = false;
@@ -62,11 +66,17 @@ public class MotionSensor extends Sensors {
 			movement = true;
 	}
 	
+	/*
+	 * Returns the motion status as boolean data-type
+	 */
 	private boolean getMotion() {
 		clock.Event();
-            return movement;
+        return movement;
 	}
 	
+	/*
+	 * Parameterized Constructor takes the Sensor id and the name
+	 */
 	public MotionSensor(int id, String sensorName) {
 		super(id, sensorName);
 		movement = false;

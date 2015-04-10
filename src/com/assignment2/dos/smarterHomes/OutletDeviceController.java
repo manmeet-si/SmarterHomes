@@ -42,6 +42,10 @@ import com.assignment2.dos.smarterHomes.Network.OutletDeviceCommunicator;
 import com.assignment2.dos.smarterHomes.Network.RegisterName;
 import com.assignment2.dos.smarterHomes.Network.UpdateNames;
 
+/*
+ * OutletDeviceController acts as client and communicates with the gateway and changes state of Outlet object if temperature change detected
+ * Also participates in leader election
+ */
 
 public class OutletDeviceController {
 		Outlet outlet;
@@ -51,6 +55,9 @@ public class OutletDeviceController {
         LogicalClock clock;
         boolean isLeader;
 
+        /*
+         * Heater Device constructor. This class acts as a client for the gateway and participates in leader election
+         */
         public OutletDeviceController () {
         		outlet = new Outlet();
                 client = new Client();
