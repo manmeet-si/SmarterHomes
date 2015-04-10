@@ -509,6 +509,9 @@ public class GatewayManager {
                         public void windowClosed (WindowEvent evt) {
                                 server.stop();
                         }
+                        public void windowClosing (WindowEvent evt) {
+                            server.stop();
+                        }
                 });
               //  frame.getContentPane().add(new JLabel("Gateway Manager running!"));
               //  frame.setIconImage(new ImageIcon("images/server_room.jpg"));
