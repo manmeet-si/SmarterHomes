@@ -347,7 +347,7 @@ public class DoorSensor extends Sensors {
                 Log.set(Log.LEVEL_DEBUG);
                 DoorSensor manager = new DoorSensor(1, "door-sensor");
             if (args.length > 0 && args[0] != null) {
-                System.out.println("reading file:" + args[1] + "\n");
+                System.out.println("reading file:" + args[0] + "\n");
                 BufferedReader br = new BufferedReader(new FileReader(args[0]));
                 String line = null;
                 String firstLine = null;
