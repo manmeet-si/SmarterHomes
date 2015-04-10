@@ -82,7 +82,7 @@ public class OutletDeviceController {
 
                                 if (object instanceof UpdateNames) {
                                         UpdateNames updateNames = (UpdateNames)object;
-                                        clock.Compare(Long.parseLong(updateNames.time));
+                                        clock.Compare(Double.parseDouble(updateNames.time));
                                         chatFrame.setNames(updateNames.names);
                                         return;
                                 }
@@ -90,7 +90,7 @@ public class OutletDeviceController {
                                 if (object instanceof ChatMessage) {
                                         ChatMessage chatMessage = (ChatMessage)object;
                                       
-                                        clock.Compare(Long.parseLong(chatMessage.time));
+                                        clock.Compare(Double.parseDouble(chatMessage.time));
                                         chatFrame.addMessage(chatMessage.text);
                                         String message = chatMessage.text;
                                         if (message == null)
@@ -107,7 +107,7 @@ public class OutletDeviceController {
                                 
                                 if (object instanceof OutletDeviceCommunicator) {
                                 	OutletDeviceCommunicator deviceCommunicator = (OutletDeviceCommunicator)object;
-                                        clock.Compare(Long.parseLong(deviceCommunicator.time));
+                                        clock.Compare(Double.parseDouble(deviceCommunicator.time));
                                 	boolean statusSame = (deviceCommunicator.text.equalsIgnoreCase("turn-off") && outlet.getStatus().equals(State.OFF)) || 
                                 			(deviceCommunicator.text.equalsIgnoreCase("turn-on") && outlet.getStatus().equals(State.ON));
                                 	if (deviceCommunicator.text.equalsIgnoreCase("turn-off"))

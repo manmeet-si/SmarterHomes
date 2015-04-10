@@ -176,7 +176,7 @@ public class GatewayManager {
                                         // impossible with our client, but a hacker could send messages at any time.
                                         if (connection.name != null) return;
 
-                                        clock.Compare(Long.parseLong(((RegisterName)object).time));
+                                        clock.Compare(Double.parseDouble(((RegisterName)object).time));
                                         // Ignore the object if the name is invalid.
                                         String name = ((RegisterName)object).name;
                                         if (name == null) return;
@@ -224,7 +224,7 @@ public class GatewayManager {
                                         ChatMessage chatMessage = (ChatMessage)object;
                                         // Ignore the object if the chat message is invalid.
 
-                                        clock.Compare(Long.parseLong(chatMessage.time));
+                                        clock.Compare(Double.parseDouble(chatMessage.time));
                                         String message = chatMessage.text;
                                         if (message == null) return;
                                         message = message.trim();
@@ -240,7 +240,7 @@ public class GatewayManager {
                                     if (connection.name == null) return;
                                     MotionSensorCommunicator motionSensorCommunicator = (MotionSensorCommunicator)object;
 
-                                    clock.Compare(Long.parseLong(motionSensorCommunicator.time));
+                                    clock.Compare(Double.parseDouble(motionSensorCommunicator.time));
                                     // Ignore the object if the chat message is invalid.
                                     String message = motionSensorCommunicator.text;
                                     if (message == null) return;
@@ -300,7 +300,7 @@ public class GatewayManager {
                                     if (connection.name == null) return;
                                     DoorSensorCommunicator doorSensorCommunicator = (DoorSensorCommunicator)object;
 
-                                    clock.Compare(Long.parseLong(doorSensorCommunicator.time));
+                                    clock.Compare(Double.parseDouble(doorSensorCommunicator.time));
                                     // Ignore the object if the chat message is invalid.
                                     String message = doorSensorCommunicator.text;
                                     updateDataBase("DoorSensor", message);
@@ -360,7 +360,7 @@ public class GatewayManager {
                                     if (connection.name == null) return;
                                     OutletDeviceCommunicator communicator = (OutletDeviceCommunicator)object;
 
-                                    clock.Compare(Long.parseLong(communicator.time));
+                                    clock.Compare(Double.parseDouble(communicator.time));
                                     // Ignore the object if the chat message is invalid.
                                     String message = communicator.text;
                                     if (message == null) return;
@@ -381,7 +381,7 @@ public class GatewayManager {
                                     if (connection.name == null) return;
                                     DatabaseCommunicator communicator = (DatabaseCommunicator)object;
 
-                                    clock.Compare(Long.parseLong(communicator.time));
+                                    clock.Compare(Double.parseDouble(communicator.time));
                                     // Ignore the object if the chat message is invalid.
                                     String message = communicator.text;
                                     if (message == null) return;
@@ -399,7 +399,7 @@ public class GatewayManager {
                                     if (connection.name == null) return;
                                     UpdateStatus status = (UpdateStatus)object;
 
-                                    clock.Compare(Long.parseLong(status.time));
+                                    clock.Compare(Double.parseDouble(status.time));
                                     // Ignore the object if the chat message is invalid.
                                     String message = status.text;
                                     String name = status.name;
