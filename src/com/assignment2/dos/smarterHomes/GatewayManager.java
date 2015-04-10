@@ -411,9 +411,9 @@ public class GatewayManager {
                                     if (name != null && name.equalsIgnoreCase("TemperatureSensor")) {
                                     	Double temp = Double.parseDouble(message);
                                     	updateDataBase("TemperatureSensor", temp + "");
-                                    	if (temp < 1.0)
+                                    	if (temp <= TEMP_LOW)
                                     		message = "turn-on";
-                                    	else if (temp > 2.0)
+                                    	else if (temp >= TEMP_HIGH)
                                     		message = "turn-off";
                                     	else
                                     		return;
@@ -566,7 +566,7 @@ public class GatewayManager {
 
                 GatewayManager manager = new GatewayManager();
                 if (args.length > 0 && args[0] != null) {
-                System.out.println("reading file:" + args[1] + "\n");
+                System.out.println("reading file:" + args[0] + "\n");
                 BufferedReader br = new BufferedReader(new FileReader(args[0]));
                 String line = null;
                 String firstLine = null;
