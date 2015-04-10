@@ -386,13 +386,17 @@ public class TemperatureSensor extends Sensors {
                         System.out.println("file read complete!");
                         ArrayList<String> sensorEvents = map.get("Temperature");
                         ArrayList<String> time = map.get("Time");
-                        for (int wait = 0; wait < 1000000000; wait++) {
-                            ; // wait for a moment
+                        try {
+                            Thread.sleep(1000);                 //1000 milliseconds is one second.
+                        } catch(InterruptedException ex) {
+                            Thread.currentThread().interrupt();
                         }
                         for (int i = 0 ; i < sensorEvents.size(); i++) {
                                 String event = sensorEvents.get(i).toLowerCase();
-                                for (int wait = 0; wait < 1000000000; wait++) {
-                                        ; // wait for a moment
+                                try {
+                                    Thread.sleep(5000);                 //1000 milliseconds is one second.
+                                } catch(InterruptedException ex) {
+                                    Thread.currentThread().interrupt();
                                 }
                                 try {
                                 	manager.setTemperature(Double.parseDouble(sensorEvents.get(i)));
