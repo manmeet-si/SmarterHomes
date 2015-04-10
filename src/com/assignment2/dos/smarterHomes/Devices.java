@@ -1,6 +1,6 @@
 package com.assignment2.dos.smarterHomes;
 
-/***
+/**
  * Devices class contains the device id and the device name as parameters along with the status of the device.
  * Devices class is the super class for all the devices 
  * and contains the basic functionality which is inherited
