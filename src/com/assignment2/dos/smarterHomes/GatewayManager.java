@@ -510,10 +510,11 @@ public class GatewayManager {
                                 server.stop();
                                 System.exit(0);
                         }
-                        public void windowClosing (WindowEvent evt) {
+                   /*     public void windowClosing (WindowEvent evt) {
                             server.stop();
                             System.exit(0);
                         }
+                   */
                 });
               //  frame.getContentPane().add(new JLabel("Gateway Manager running!"));
               //  frame.setIconImage(new ImageIcon("images/server_room.jpg"));
