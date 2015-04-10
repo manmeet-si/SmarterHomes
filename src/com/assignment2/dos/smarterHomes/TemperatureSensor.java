@@ -397,8 +397,8 @@ public class TemperatureSensor extends Sensors {
                                         communicator.text = "false";
                                 communicator.time = time.get(i);
                                 manager.client.sendTCP(communicator);
-                                System.out.println("Motion Sensor sending status to Gateway");
-                                SmartHomesLogger logger = new SmartHomesLogger("Motion Sensor sending status to Gateway");
+                                System.out.println("Temperature Sensor sending status to Gateway");
+                                SmartHomesLogger logger = new SmartHomesLogger("Temperature Sensor sending status to Gateway");
 
 
                         }

@@ -388,8 +388,8 @@ public class DoorSensor extends Sensors {
                         communicator.text = "false";
                     communicator.time = time.get(i);
                     manager.client.sendTCP(communicator);
-                    System.out.println("Motion Sensor sending status to Gateway");
-                    SmartHomesLogger logger = new SmartHomesLogger("Motion Sensor sending status to Gateway");
+                    System.out.println("Door Sensor sending status to Gateway");
+                    SmartHomesLogger logger = new SmartHomesLogger("Door Sensor sending status to Gateway");
 
 
                 }
