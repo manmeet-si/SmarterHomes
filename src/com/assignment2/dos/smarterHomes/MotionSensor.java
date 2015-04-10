@@ -198,7 +198,8 @@ public class MotionSensor extends Sensors {
                                 client.connect(5000, host, Network.port);
                                 // Server communication after connection can go here, or in Listener#connected().
                         } catch (IOException ex) {
-                                ex.printStackTrace();
+                                System.out.println("Unable to connect to the gateway");
+                        		//ex.printStackTrace();
                                 System.exit(1);
                         }
                 }
