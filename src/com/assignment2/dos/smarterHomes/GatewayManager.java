@@ -284,6 +284,7 @@ public class GatewayManager {
                                     resetCount();
                                     LightBulbDeviceCommunicator deviceCommunicator = new LightBulbDeviceCommunicator();
                                     deviceCommunicator.text = "turn-on";
+                                    deviceCommunicator.time = clock.GetStringTime();
                                     if (map.get("LightBulb") == null) {
                                     	System.out.println("Light Bulb Device not running");
                                     	return;
