@@ -1,5 +1,5 @@
 
-/**
+/***
  *  @author Manmeet Singh
  * @email msingh@cs.umass.edu
  *
@@ -43,7 +43,7 @@ import com.assignment2.dos.smarterHomes.Network.TemperatureSensorCommunicator;
 import com.assignment2.dos.smarterHomes.Network.UpdateNames;
 import com.assignment2.dos.smarterHomes.Network.UpdateStatus;
  
-/*
+/**
  * TemperatureSensor class is based on push/pull model and extends from Sensor and communicates the temperature to the gateway.
  *
  *
@@ -61,7 +61,7 @@ public class TemperatureSensor extends Sensors {
 		super();
 	}
 
-	/*
+	/**
 	 * Get the current temperature
 	 */
 	double getTemperature() {
@@ -69,7 +69,7 @@ public class TemperatureSensor extends Sensors {
 	}
 	
 
-	/*
+	/**
 	 * Set the current temperature
 	 */
 	void setTemperature(double temp) {
@@ -77,7 +77,7 @@ public class TemperatureSensor extends Sensors {
 	}
 	
 
-	/*
+	/**
 	 * Constructor with component id and name
 	 */
 	public TemperatureSensor(int id, String sensorName) {

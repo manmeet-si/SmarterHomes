@@ -46,7 +46,7 @@ import com.assignment2.dos.smarterHomes.Network.TemperatureSensorCommunicator;
 import com.assignment2.dos.smarterHomes.Network.UpdateNames;
 import com.assignment2.dos.smarterHomes.Network.UpdateStatus;
 
-/*
+/**
  * GatewayManager (stateful server) handles the complete functionality of the Gateway. 
  * It's a stateful server and communicates with the devices controllers 
  * and the sensors. 
@@ -68,6 +68,10 @@ public class GatewayManager {
         String leader;
         boolean isLeader;
         
+        /**
+         * 
+         * Polls the Temperature Sensor after every threshold time
+         */
         void pollTemperatureSensor(Connection tempConnector) {
         	java.util.Timer timer = new java.util.Timer();
         	java.util.TimerTask updates = new java.util.TimerTask() {
@@ -85,6 +89,10 @@ public class GatewayManager {
         	
         }
         
+        /**
+         * 
+         * Checks if motion detected and communicates to the LightBulb
+         */
         void checkMotion(Connection connector) {
 
         	java.util.Timer timer = new java.util.Timer();
@@ -110,6 +118,12 @@ public class GatewayManager {
         	
         }
         
+        /**
+         * 
+         * @param component
+         * @param status
+         * method to communicate with DabaBaseHandler for updating the database
+         */
         void updateDataBase(String component, String status) {
         	clock.Event();
 			UpdateDataBase communicator = new UpdateDataBase();
@@ -125,7 +139,7 @@ public class GatewayManager {
         	System.out.println("Gateway sending update to database");
         	SmartHomesLogger logger = new SmartHomesLogger("Gateway sending update to database");
 		}
-        /*
+        /**
          * GatewayManager default constructor: Creates instance of GatewayManager
          */
         public GatewayManager () throws IOException {
@@ -149,7 +163,9 @@ public class GatewayManager {
                 // For consistency, the classes to be sent over the network are
                 // registered by the same method for both the client and server.
                 Network.register(server);
-                
+                /**
+                 * Listeners for the gateway
+                 */
                 server.addListener(new Listener() {
                         public void received (Connection c, Object object) {
                                 // We know all connections for this server are actually ChatConnections.
@@ -419,7 +435,9 @@ public class GatewayManager {
                                 
                                
                         }
-
+                        /**
+                         * Method used to communicate for Leader election
+                         */
                         private void electLeader() {
                         	 InetAddress IP = null;
 							try {
@@ -454,6 +472,9 @@ public class GatewayManager {
                         	count = 0;
 						}
 						
+						/**
+						 * method to handle when a  component leaves 
+						 */
 						public void disconnected (Connection c) {
                                 ChatConnection connection = (ChatConnection)c;
                                 if (connection.name != null) {
@@ -506,7 +527,7 @@ public class GatewayManager {
 
         }
 
-        /*
+        /**
          * Checks for the connection updates
          */
         void updateNames () {

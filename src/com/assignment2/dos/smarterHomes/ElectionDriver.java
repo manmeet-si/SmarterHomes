@@ -7,7 +7,7 @@ import java.rmi.registry.Registry;
 import java.util.Timer;
 import java.util.TimerTask;
 
-/*
+/**
  * Class to handle leader election
  */
 public class ElectionDriver {

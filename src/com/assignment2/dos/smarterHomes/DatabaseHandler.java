@@ -1,5 +1,5 @@
 
-/* @author Manmeet Singh
+/** @author Manmeet Singh
  * @email msingh@cs.umass.edu
  *
  */
@@ -47,7 +47,7 @@ import com.assignment2.dos.smarterHomes.Network.RegisterName;
 import com.assignment2.dos.smarterHomes.Network.UpdateDataBase;
 import com.assignment2.dos.smarterHomes.Network.UpdateNames;
 
-/*
+/**
  * DataBaseHandler acts a client for the gateway and communicates with the Database, thus acting as a bridge for the database and the gateway
  */
 public class DatabaseHandler {
@@ -57,7 +57,7 @@ public class DatabaseHandler {
         String name;
         LogicalClock clock;
 
-        /*
+        /**
          * handleGatewayMessage method takes the message and the component as arguments and replies back the the response based on the
          * query. The message which is the query may be to get the history or the status for all or a particular component
          */
@@ -102,7 +102,7 @@ public class DatabaseHandler {
 		    return res.toString();
 		}
 
-        /*
+        /**
          * Constructor for the DataBase-Handler class
          */
 		public DatabaseHandler () {

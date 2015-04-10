@@ -40,7 +40,7 @@ import com.assignment2.dos.smarterHomes.Network.DoorSensorCommunicator;
 import com.assignment2.dos.smarterHomes.Network.RegisterName;
 import com.assignment2.dos.smarterHomes.Network.UpdateNames;
  
-/*
+/**
  * 
  * DoorSensor is the sub-class of Sensor and contains the functionality
  * of the door opened or closed along with communicating with the 
@@ -57,7 +57,7 @@ public class DoorSensor extends Sensors {
 
     LogicalClock clock;
 
-    /*
+    /**
      * Default Constructor for the DoorSensor class
      */
 	public DoorSensor() {
@@ -65,7 +65,7 @@ public class DoorSensor extends Sensors {
         clock = new LogicalClock();
 	}
 
-	/*
+	/**
 	 * method to set the door on or off
 	 */
 	private void setDoorStatus(String s) {
@@ -76,14 +76,14 @@ public class DoorSensor extends Sensors {
 			movement = true;
 	}
 	
-	/*
+	/**
 	 * method returning the current status of the door
 	 */
 	private boolean getDoorStatus() {
 		return movement;
 	}
 	
-	/*
+	/**
 	 * Parameterized Constructor for the door class taking the door id and the name of the door sensor
 	 */
 	public DoorSensor(int id, String sensorName) {

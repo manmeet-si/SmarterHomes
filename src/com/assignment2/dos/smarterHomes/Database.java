@@ -12,11 +12,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-/**
+/***
  * Created by idurugkar on 4/7/15.
  */
 
-/**Database is a file containing the status of the sensors as a CSV
+/***Database is a file containing the status of the sensors as a CSV
  *  The format of the CSV is:
  *  sensorName, status, time
  *
@@ -70,7 +70,7 @@ public class Database {
         }
     }
 
-    /*
+    /**
      * Put the given status of the provided sensor in the database
      */
     public boolean PutStatus(String sensor, String status, String time)
@@ -100,7 +100,7 @@ public class Database {
         return false;
     }
 
-    /*
+    /**
      * Put the given status of the provided sensor in the database without time
      * If no time provided, save as '--'
     */
@@ -131,7 +131,7 @@ public class Database {
         return false;
     }
 
-    /*
+    /**
      *  return status of all: devices and components
      */
     public HashMap<String, List<String>> GetAll()
@@ -167,7 +167,7 @@ public class Database {
     }
 
 
-    /*
+    /**
      * Method to get the complete history of a particular sensor
      */
     public HashMap<String, List<String>> GetHistory(String sensor)
@@ -212,7 +212,7 @@ public class Database {
         return null;
     }
 
-    /*
+    /**
      * Method to get the latest status of sensor
      */
     public HashMap<String, List<String>> GetCurrentStatus(String sensorName)
@@ -245,7 +245,7 @@ public class Database {
     }
 
 
-    /*
+    /**
      * Method to get the complete history of all sensors
      */
     public HashMap<String, List<String>> GetAllHistory()

@@ -5,6 +5,11 @@ package com.assignment2.dos.smarterHomes;
  *
  */
 
+/**
+ * 
+ * Sensors contains the basic functionality for Sensor: Takes the Sensor id and name as parameter
+ *
+ */
 public class Sensors {
 	int id;
 	String name;
