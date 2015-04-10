@@ -233,7 +233,7 @@ public class DatabaseHandler {
                 JList<String> nameList;
 
                 public ChatFrame (String host) {
-                        super("DatBase-Controller");
+                        super("DataBase-Controller");
                         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                         setSize(640, 200);
                         setLocationRelativeTo(null);
@@ -304,7 +304,11 @@ public class DatabaseHandler {
                                 public void windowClosed (WindowEvent evt) {
                                         listener.run();
                                 }
-
+                                
+                                public void windowClosing (WindowEvent evt) {
+                                    dispose();
+                                }
+                                
                                 public void windowActivated (WindowEvent evt) {
                                         sendText.requestFocus();
                                 }

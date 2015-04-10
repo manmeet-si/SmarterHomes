@@ -97,21 +97,8 @@ public class LightBulbDeviceController {
                                         
                                         return;
                                 }
-                                /**
-                                if (object instanceof LightBulbDeviceCommunicator) {
-                                	LightBulbDeviceCommunicator deviceCommunicator = (LightBulbDeviceCommunicator)object;
-                                	if (deviceCommunicator.text.equalsIgnoreCase("turn-off"))
-                                		bulb.turnOff();
-                                	else
-                                		bulb.turnOn();
-                                	System.out.println("Gateway sending the message of the Temperature Sensor");
-                                	chatFrame.addMessage("Recieved message:" + deviceCommunicator.text + " from gateway.");
-                                	chatFrame.addMessage("Turning device " + bulb.getStatus() + ".");
-                                    return;
-                                }
                                 
-                                
-                                */
+                             
                                 if (object instanceof LightBulbDeviceCommunicator) {
                                 	LightBulbDeviceCommunicator deviceCommunicator = (LightBulbDeviceCommunicator)object;
                                         clock.Compare(Long.parseLong(deviceCommunicator.time));
