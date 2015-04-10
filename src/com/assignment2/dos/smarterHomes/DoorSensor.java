@@ -342,6 +342,7 @@ public class DoorSensor extends Sensors {
                         });
                 }
         }
+        
 
         public static void main (String[] args) throws IOException{
                 Log.set(Log.LEVEL_DEBUG);
