@@ -5,6 +5,7 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import com.esotericsoftware.minlog.Log;
 import com.assignment2.dos.smarterHomes.CurrentTime;
+import com.assignment2.dos.smarterHomes.Network.BerkeleyTimeSync;
 import com.assignment2.dos.smarterHomes.Network.UpdateDataBase;
 import com.assignment2.dos.smarterHomes.Node;
 import com.assignment2.dos.smarterHomes.SmartHomesLogger;
@@ -69,6 +71,12 @@ public class GatewayManager {
         HashSet<String> connectionsList; // Stateful server;//contains the complete connection which are active
         String leader;
         boolean isLeader;
+        Timestamp doorSensorTimestamp;
+        Timestamp motionSensorTimestamp;
+        int isSynchnronized;
+		double cumulativeTime;
+		int totalBerkeleyClockCnt;
+		double avgTime;
         
         /**
          * 
@@ -120,6 +128,29 @@ public class GatewayManager {
         	timer.scheduleAtFixedRate(updates, new Date(), 5000);
         	
         }
+        
+        void synchrnoizeClocks() {
+        	java.util.Timer timer = new java.util.Timer();
+        	java.util.TimerTask updates = new java.util.TimerTask() {
+        		@Override
+        		public void run() {
+        			isSynchnronized++;
+        			if (isSynchnronized != 8) {
+        				return;
+        			}
+                    clock.Event();
+                    BerkeleyTimeSync timeSync = new BerkeleyTimeSync();
+                    timeSync.component = "leader";
+                    timeSync.time = berkeleyClock.getTime() + "";
+        			server.sendToAllTCP(timeSync);
+                	System.out.println("Time synchronization process started");
+        			SmartHomesLogger logger = new SmartHomesLogger("Time synchronization process started");
+        		}
+        	};
+        	timer.scheduleAtFixedRate(updates, new Date(), 2000);
+        	
+        }
+        
 
         /**
          * 
@@ -154,6 +185,15 @@ public class GatewayManager {
         		isLeader = false;
         		clock = new LogicalClock();
         		berkeleyClock = new BerkeleyClock();
+        		berkeleyClock.addMilliseconds(300);
+        		doorSensorTimestamp = new Timestamp(0);
+        		motionSensorTimestamp = new Timestamp(0);
+        		isSynchnronized = 0;
+        		avgTime = 0;
+        		cumulativeTime = 0;
+        		totalBerkeleyClockCnt = 0;
+        		
+        		synchrnoizeClocks();
                 server = new Server() {
                         protected Connection newConnection () {
                                 // By providing our own connection implementation, we can store per
@@ -238,6 +278,34 @@ public class GatewayManager {
                                         server.sendToAllTCP(chatMessage);
                                         return;
                                 }
+                                
+                                if (object instanceof BerkeleyTimeSync) {
+                                    // Ignore the object if a client tries to chat before registering a name.
+                                    if (connection.name == null) return;
+                                    BerkeleyTimeSync clockSync = (BerkeleyTimeSync)object;
+                                    // Ignore the object if the chat message is invalid.
+                                    double t = 0;
+                                    try {
+                                    	t = Double.parseDouble(clockSync.time);
+                                    } catch(Exception e) {
+                                    	
+                                    }
+                                    System.out.println("Components registered: " + connectionsList.size());
+                                    cumulativeTime += t;
+                                    totalBerkeleyClockCnt++;
+                                    
+                                    if (totalBerkeleyClockCnt == connectionsList.size()) {
+                                    	if (connectionsList.isEmpty())
+                                    		return;
+                                    	avgTime = cumulativeTime / connectionsList.size();
+                                    	clockSync.time = avgTime + "";
+                                    	clockSync.component = "leader-brodcast time";
+                                    	server.sendToAllTCP(clockSync);
+                                    }
+                                    
+                                    return;
+                            }
+
                                 if (object instanceof MotionSensorCommunicator) {
                                     // Ignore the object if a client tries to chat before registering a name.
                                     if (connection.name == null) return;
@@ -287,16 +355,20 @@ public class GatewayManager {
                                     	SmartHomesLogger logger = new SmartHomesLogger("ALERT!! Someone is at home!");
                                     	return;
                                     }
-                                    if(doorStatus == false)
-                                        return;
+                                    
+                                    
                                     resetCount();
                                     LightBulbDeviceCommunicator deviceCommunicator = new LightBulbDeviceCommunicator();
-                                    deviceCommunicator.text = "turn-on";
-                                    deviceCommunicator.time = clock.GetStringTime();
+                                    
                                     if (map.get("LightBulb") == null) {
                                     	System.out.println("Light Bulb Device not running");
                                     	return;
                                     }
+                                    if (doorSensorTimestamp.getTime() < motionSensorTimestamp.getTime()) {
+                                    	deviceCommunicator.text = "turn-on";
+                                    }
+                                    	
+                                    deviceCommunicator.time = clock.GetStringTime();
                                     String log = CurrentTime.getCurrentTime() + " Gateway/motion 1";
                                 	SmartHomesLogger logger = new SmartHomesLogger(log);
                                     server.sendToTCP(map.get("LightBulb").getID(), deviceCommunicator);
@@ -347,8 +419,7 @@ public class GatewayManager {
                                     	
                                     	return;
                                     }
-                                    if(!motionStatus)
-                                        return;
+                                    
                                     resetCount();
                                     LightBulbDeviceCommunicator deviceCommunicator = new LightBulbDeviceCommunicator();
                                     deviceCommunicator.text = "turn-off";
@@ -356,7 +427,11 @@ public class GatewayManager {
                                     	System.out.println("Light Bulb Device not running");
                                     	return;
                                     }
+                                    if (doorSensorTimestamp.getTime() < motionSensorTimestamp.getTime()) {
+                                    	deviceCommunicator.text = "turn-on";
+                                    }
                                     String rMessage = "on";
+                                	if (deviceCommunicator.text =="turn-off")	
                                 		rMessage = "off";
                                     updateDataBase("LightBulb", rMessage);
 
@@ -551,7 +626,9 @@ public class GatewayManager {
 
         }
 
-        /**
+        
+
+		/**
          * Checks for the connection updates
          */
         void updateNames () {

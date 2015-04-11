@@ -40,6 +40,7 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.minlog.Log;
+import com.assignment2.dos.smarterHomes.Network.BerkeleyTimeSync;
 import com.assignment2.dos.smarterHomes.Network.ChatMessage;
 import com.assignment2.dos.smarterHomes.Network.OutletDeviceCommunicator;
 import com.assignment2.dos.smarterHomes.Network.RegisterName;
@@ -60,6 +61,7 @@ public class TemperatureSensor extends Sensors {
     double temp;
     boolean isLeader;
     LogicalClock clock;
+    BerkeleyClock berkeleyClock;
     
 	public TemperatureSensor() {
 		super();
@@ -91,6 +93,8 @@ public class TemperatureSensor extends Sensors {
 		client = new Client();
         clock = new LogicalClock();
 
+        berkeleyClock = new BerkeleyClock();
+        berkeleyClock.addMilliseconds(-900);
         client.start();
 
 
@@ -132,6 +136,28 @@ public class TemperatureSensor extends Sensors {
                                 return;
                         }
                         
+                        if (object instanceof BerkeleyTimeSync) {
+                            BerkeleyTimeSync chatMessage = (BerkeleyTimeSync)object;
+                            clock.Compare(Double.parseDouble(chatMessage.time));
+                            String message = chatMessage.time;
+                            if (message == null)
+                            	return;
+                           long time = 0;
+                           try {
+                        	   Double t = Double.parseDouble(message);
+                        	   time = Math.round(t);
+                           } catch(Exception e) {
+                        	   return;
+                           }
+                           berkeleyClock.setTime(time); 
+                           String _log = "Clock synchronized to:: " + berkeleyClock.toString(); 
+                           SmartHomesLogger logger = new SmartHomesLogger(_log);
+                           System.out.println(_log); 
+                           chatFrame.addMessage("Clock syncronized to :" + berkeleyClock.toString());
+
+                           return;
+                    }
+
                         if (object instanceof TemperatureSensorCommunicator) {
                         	TemperatureSensorCommunicator sensorCommunicator = (TemperatureSensorCommunicator)object;
                         	if (sensorCommunicator.text.equalsIgnoreCase("get-status") || sensorCommunicator.text.equalsIgnoreCase("status") || sensorCommunicator.text.equalsIgnoreCase("temperature-status")) {

@@ -39,6 +39,7 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.minlog.Log;
+import com.assignment2.dos.smarterHomes.Network.BerkeleyTimeSync;
 import com.assignment2.dos.smarterHomes.Network.ChatMessage;
 import com.assignment2.dos.smarterHomes.Network.DoorSensorCommunicator;
 import com.assignment2.dos.smarterHomes.Network.RegisterName;
@@ -60,7 +61,8 @@ public class DoorSensor extends Sensors {
     boolean isLeader;
 
     LogicalClock clock;
-
+    BerkeleyClock berkeleyClock;
+    
     /**
      * Default Constructor for the DoorSensor class
      */
@@ -95,6 +97,8 @@ public class DoorSensor extends Sensors {
 		movement = false;
 		isLeader = false;
         clock = new LogicalClock();
+        berkeleyClock = new BerkeleyClock();
+        berkeleyClock.addMilliseconds(600);
         client = new Client();
         client.start();
         clock.Event();
@@ -138,6 +142,29 @@ public class DoorSensor extends Sensors {
                                 		isLeader = false;
                                 return;
                         }
+                        
+                        if (object instanceof BerkeleyTimeSync) {
+                            BerkeleyTimeSync chatMessage = (BerkeleyTimeSync)object;
+                            clock.Compare(Double.parseDouble(chatMessage.time));
+                            String message = chatMessage.time;
+                            if (message == null)
+                            	return;
+                           long time = 0;
+                           try {
+                        	   Double t = Double.parseDouble(message);
+                        	   time = Math.round(t);
+                           } catch(Exception e) {
+                        	   return;
+                           }
+                           berkeleyClock.setTime(time); 
+                           String _log = "Clock synchronized to:: " + berkeleyClock.toString(); 
+                           SmartHomesLogger logger = new SmartHomesLogger(_log);
+                           System.out.println(_log); 
+                           chatFrame.addMessage("Clock syncronized to :" + berkeleyClock.toString());
+
+                           return;
+                    }
+
                         
                         if (object instanceof DoorSensorCommunicator) {
 

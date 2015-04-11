@@ -31,6 +31,7 @@ public class Network {
                 kryo.register(DatabaseCommunicator.class);
                 kryo.register(GatewayCommunicator.class);
                 kryo.register(UpdateDataBase.class);
+                kryo.register(BerkeleyTimeSync.class);
         }
 
         static public class RegisterName {
@@ -93,6 +94,11 @@ public class Network {
         static public class UpdateStatus {
     		public String name;
     		public String text;
-                public String time;
+            public String time;
+        }
+        
+        static public class BerkeleyTimeSync {
+    		public String component;
+            public String time;
         }
 }

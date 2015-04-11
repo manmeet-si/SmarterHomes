@@ -39,6 +39,7 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.minlog.Log;
+import com.assignment2.dos.smarterHomes.Network.BerkeleyTimeSync;
 import com.assignment2.dos.smarterHomes.Network.ChatMessage;
 import com.assignment2.dos.smarterHomes.Network.LightBulbDeviceCommunicator;
 import com.assignment2.dos.smarterHomes.Network.MotionSensorCommunicator;
@@ -56,6 +57,7 @@ public class MotionSensor extends Sensors {
     Client client;
     String name;
     LogicalClock clock;
+    BerkeleyClock berkeleyClock;
     boolean movement;
 	public MotionSensor() {
 		movement = false;
@@ -87,7 +89,8 @@ public class MotionSensor extends Sensors {
         clock = new LogicalClock();
         client.start();
         isLeader = false;
-        
+        berkeleyClock = new BerkeleyClock();
+        berkeleyClock.addMilliseconds(700);
         // For consistency, the classes to be sent over the network are
         // registered by the same method for both the client and server.
         Network.register(client);
@@ -126,6 +129,28 @@ public class MotionSensor extends Sensors {
                                 return;
                         }
                         
+                        if (object instanceof BerkeleyTimeSync) {
+                            BerkeleyTimeSync chatMessage = (BerkeleyTimeSync)object;
+                            clock.Compare(Double.parseDouble(chatMessage.time));
+                            String message = chatMessage.time;
+                            if (message == null)
+                            	return;
+                           long time = 0;
+                           try {
+                        	   Double t = Double.parseDouble(message);
+                        	   time = Math.round(t);
+                           } catch(Exception e) {
+                        	   return;
+                           }
+                           berkeleyClock.setTime(time); 
+                           String _log = "Clock synchronized to:: " + berkeleyClock.toString(); 
+                           SmartHomesLogger logger = new SmartHomesLogger(_log);
+                           System.out.println(_log); 
+                           chatFrame.addMessage("Clock syncronized to :" + berkeleyClock.toString());
+
+                           return;
+                    }
+                    
                         if (object instanceof MotionSensorCommunicator) {
                         	MotionSensorCommunicator sensorCommunicator = (MotionSensorCommunicator)object;
                                 clock.Compare(Double.parseDouble(sensorCommunicator.time));

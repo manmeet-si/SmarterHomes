@@ -40,6 +40,7 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.minlog.Log;
+import com.assignment2.dos.smarterHomes.Network.BerkeleyTimeSync;
 import com.assignment2.dos.smarterHomes.Network.ChatMessage;
 import com.assignment2.dos.smarterHomes.Network.DatabaseCommunicator;
 import com.assignment2.dos.smarterHomes.Network.GatewayCommunicator;
@@ -56,13 +57,14 @@ public class DatabaseHandler {
         Client client;
         String name;
         LogicalClock clock;
+        BerkeleyClock berkeleyClock;
 
         /**
          * handleGatewayMessage method takes the message and the component as arguments and replies back the the response based on the
          * query. The message which is the query may be to get the history or the status for all or a particular component
          */
         private String handleGatewayMessage(String message, String component) {
-                clock.Event();
+            clock.Event();
         	HashMap<String, List<String>> ret = null;
         	if (message.equalsIgnoreCase("status")) {
         		switch(component) {
@@ -106,10 +108,12 @@ public class DatabaseHandler {
          * Constructor for the DataBase-Handler class
          */
 		public DatabaseHandler () {
-                clock = new LogicalClock();
         		db = new Database();
                 client = new Client();
                 client.start();
+                clock = new LogicalClock();
+                berkeleyClock = new BerkeleyClock();
+                berkeleyClock.addMilliseconds(700);
 
                 // For consistency, the classes to be sent over the network are
                 // registered by the same method for both the client and server.
@@ -138,6 +142,29 @@ public class DatabaseHandler {
                                         chatFrame.addMessage(chatMessage.text);
                                         return;
                                 }
+                                
+                                if (object instanceof BerkeleyTimeSync) {
+                                    BerkeleyTimeSync chatMessage = (BerkeleyTimeSync)object;
+                                    clock.Compare(Double.parseDouble(chatMessage.time));
+                                    String message = chatMessage.time;
+                                    if (message == null)
+                                    	return;
+                                   long time = 0;
+                                   try {
+                                	   Double t = Double.parseDouble(message);
+                                	   time = Math.round(t);
+                                   } catch(Exception e) {
+                                	   return;
+                                   }
+                                   berkeleyClock.setTime(time); 
+                                   String _log = "Clock synchronized to:: " + berkeleyClock.toString(); 
+                                   SmartHomesLogger logger = new SmartHomesLogger(_log);
+                                   System.out.println(_log); 
+                                   chatFrame.addMessage("Clock syncronized to :" + berkeleyClock.toString());
+
+                                   return;
+                            }
+
                                 
                                 if (object instanceof GatewayCommunicator) {
                                 	GatewayCommunicator deviceCommunicator = (GatewayCommunicator)object;
