@@ -349,7 +349,7 @@ public class GatewayManager {
                                         return;
                                     resetCount();
                                     LightBulbDeviceCommunicator deviceCommunicator = new LightBulbDeviceCommunicator();
-                                    deviceCommunicator.text = "turn-on";
+                                    deviceCommunicator.text = "turn-off";
                                     if (map.get("LightBulb") == null) {
                                     	System.out.println("Light Bulb Device not running");
                                     	return;
