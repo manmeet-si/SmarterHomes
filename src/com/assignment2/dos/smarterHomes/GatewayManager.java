@@ -62,6 +62,8 @@ public class GatewayManager {
         boolean isHome;
         boolean doorStatus;
         boolean motionStatus;
+        double doorTime;
+        double motionTime;
         LogicalClock clock;
         HashMap<String, Connection> map; // stores the connection of the devices along with device-names
         HashSet<String> connectionsList; // Stateful server;//contains the complete connection which are active
@@ -278,6 +280,7 @@ public class GatewayManager {
                                         return;
                                     }
                                     motionStatus = true;
+                                    motionTime = Double.parseDouble(doorCommunicator.time);
                                     if(!isHome)
                                     {
                                     	//JOptionPane.showMessageDialog(null, "Someone is at home!");
@@ -285,11 +288,14 @@ public class GatewayManager {
                                     	SmartHomesLogger logger = new SmartHomesLogger("ALERT!! Someone is at home!");
                                     	return;
                                     }
-                                    if(doorStatus == false)
-                                        return;
+
                                     resetCount();
                                     LightBulbDeviceCommunicator deviceCommunicator = new LightBulbDeviceCommunicator();
-                                    deviceCommunicator.text = "turn-on";
+                                    if (doorTime < motionTime)
+                                        deviceCommunicator.text = "turn-on";
+                                    else
+                                        deviceCommunicator.text = "turn-off";
+                                    
                                     deviceCommunicator.time = clock.GetStringTime();
                                     if (map.get("LightBulb") == null) {
                                     	System.out.println("Light Bulb Device not running");
@@ -298,6 +304,7 @@ public class GatewayManager {
                                     String log = CurrentTime.getCurrentTime() + " Gateway/motion 1";
                                 	SmartHomesLogger logger = new SmartHomesLogger(log);
                                     server.sendToTCP(map.get("LightBulb").getID(), deviceCommunicator);
+
                                     //String log = CurrentTime.getCurrentTime() + " Gateway " + "LightBulb " + deviceCommunicator.text;
                                 	//SmartHomesLogger logger = new SmartHomesLogger(log);
                                     return;
@@ -338,6 +345,7 @@ public class GatewayManager {
                                         return;
                                     }
                                     doorStatus = true;
+                                    doorTime = Double.parseDouble(motionCommunicator.time)  ;
                                     if(!isHome)
                                     {
                                     	//JOptionPane.showMessageDialog(null, "Someone is at home!");
@@ -345,11 +353,12 @@ public class GatewayManager {
                                     	
                                     	return;
                                     }
-                                    if(!motionStatus)
-                                        return;
                                     resetCount();
                                     LightBulbDeviceCommunicator deviceCommunicator = new LightBulbDeviceCommunicator();
-                                    deviceCommunicator.text = "turn-off";
+                                    if (doorTime < motionTime)
+                                        deviceCommunicator.text = "turn-on";
+                                    else
+                                        deviceCommunicator.text = "turn-off";
                                     if (map.get("LightBulb") == null) {
                                     	System.out.println("Light Bulb Device not running");
                                     	return;
