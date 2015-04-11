@@ -280,7 +280,6 @@ public class GatewayManager {
                                         return;
                                     }
                                     motionStatus = true;
-                                    motionTime = Double.parseDouble(doorCommunicator.time);
                                     if(!isHome)
                                     {
                                     	//JOptionPane.showMessageDialog(null, "Someone is at home!");
@@ -288,14 +287,11 @@ public class GatewayManager {
                                     	SmartHomesLogger logger = new SmartHomesLogger("ALERT!! Someone is at home!");
                                     	return;
                                     }
-
+                                    if(doorStatus == false)
+                                        return;
                                     resetCount();
                                     LightBulbDeviceCommunicator deviceCommunicator = new LightBulbDeviceCommunicator();
-                                    if (doorTime < motionTime)
-                                        deviceCommunicator.text = "turn-on";
-                                    else
-                                        deviceCommunicator.text = "turn-off";
-                                    
+                                    deviceCommunicator.text = "turn-on";
                                     deviceCommunicator.time = clock.GetStringTime();
                                     if (map.get("LightBulb") == null) {
                                     	System.out.println("Light Bulb Device not running");
@@ -304,7 +300,6 @@ public class GatewayManager {
                                     String log = CurrentTime.getCurrentTime() + " Gateway/motion 1";
                                 	SmartHomesLogger logger = new SmartHomesLogger(log);
                                     server.sendToTCP(map.get("LightBulb").getID(), deviceCommunicator);
-
                                     //String log = CurrentTime.getCurrentTime() + " Gateway " + "LightBulb " + deviceCommunicator.text;
                                 	//SmartHomesLogger logger = new SmartHomesLogger(log);
                                     return;
@@ -345,7 +340,6 @@ public class GatewayManager {
                                         return;
                                     }
                                     doorStatus = true;
-                                    doorTime = Double.parseDouble(motionCommunicator.time)  ;
                                     if(!isHome)
                                     {
                                     	//JOptionPane.showMessageDialog(null, "Someone is at home!");
@@ -353,12 +347,11 @@ public class GatewayManager {
                                     	
                                     	return;
                                     }
+                                    if(!motionStatus)
+                                        return;
                                     resetCount();
                                     LightBulbDeviceCommunicator deviceCommunicator = new LightBulbDeviceCommunicator();
-                                    if (doorTime < motionTime)
-                                        deviceCommunicator.text = "turn-on";
-                                    else
-                                        deviceCommunicator.text = "turn-off";
+                                    deviceCommunicator.text = "turn-off";
                                     if (map.get("LightBulb") == null) {
                                     	System.out.println("Light Bulb Device not running");
                                     	return;
