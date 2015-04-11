@@ -3,7 +3,6 @@
   <groupId>SmarterHomes</groupId>
   <artifactId>SmarterHomes</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>SmarterHomes</name>
   <build>
     <sourceDirectory>src</sourceDirectory>
     <resources>
@@ -25,23 +24,4 @@
       </plugin>
     </plugins>
   </build>
-  <dependencies>
-  	<dependency>
-	<groupId>com.esotericsoftware</groupId>
-	<artifactId>kryonet</artifactId>
-	<version>2.22.0-RC1</version>
-	</dependency>
-
-  	<dependency>
-  		<groupId>com.esotericsoftware</groupId>
-  		<artifactId>kryo</artifactId>
-  		<version>3.0.1</version>
-  	</dependency>
-  	  <dependency>
-     <groupId>com.opencsv</groupId>
-     <artifactId>opencsv</artifactId>
-     <version>3.3</version>
-  	</dependency>
-  	
-  </dependencies>
 </project>
