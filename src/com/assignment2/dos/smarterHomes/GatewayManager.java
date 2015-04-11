@@ -135,7 +135,7 @@ public class GatewayManager {
         		@Override
         		public void run() {
         			isSynchnronized++;
-        			if (isSynchnronized != 8) {
+        			if (isSynchnronized != 15) {
         				return;
         			}
                     clock.Event();
@@ -367,7 +367,7 @@ public class GatewayManager {
                                     if (doorSensorTimestamp.getTime() < motionSensorTimestamp.getTime()) {
                                     	deviceCommunicator.text = "turn-on";
                                     } else {
-                                    	return;
+                                    	deviceCommunicator.text = "turn-off";
                                     }
                                     	
                                     deviceCommunicator.time = clock.GetStringTime();
@@ -432,7 +432,7 @@ public class GatewayManager {
                                     if (doorSensorTimestamp.getTime() < motionSensorTimestamp.getTime()) {
                                     	deviceCommunicator.text = "turn-on";
                                     } else {
-                                    	return;
+                                    	deviceCommunicator.text = "turn-off";
                                     }
                                     
                                     String rMessage = "on";
