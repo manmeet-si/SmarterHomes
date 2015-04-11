@@ -417,6 +417,8 @@ public class TemperatureSensor extends Sensors {
                         } catch(InterruptedException ex) {
                             Thread.currentThread().interrupt();
                         }
+                        if (sensorEvents == null)
+                        	return;
                         for (int i = 0 ; i < sensorEvents.size(); i++) {
                                 String event = sensorEvents.get(i).toLowerCase();
                                 try {

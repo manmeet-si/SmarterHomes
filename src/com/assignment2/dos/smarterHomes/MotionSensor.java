@@ -384,6 +384,8 @@ public class MotionSensor extends Sensors {
                         System.out.println("file read complete!");
                         ArrayList<String> sensorEvents = map.get("Motion");
                         ArrayList<String> time = map.get("Time");
+                        if (sensorEvents == null)
+                        	return;
                         for (int i = 0 ; i < sensorEvents.size(); i++) {
                                 String event = sensorEvents.get(i).toLowerCase();
                                 try {

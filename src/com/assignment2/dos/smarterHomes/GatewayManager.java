@@ -366,6 +366,8 @@ public class GatewayManager {
                                     }
                                     if (doorSensorTimestamp.getTime() < motionSensorTimestamp.getTime()) {
                                     	deviceCommunicator.text = "turn-on";
+                                    } else {
+                                    	return;
                                     }
                                     	
                                     deviceCommunicator.time = clock.GetStringTime();
@@ -429,7 +431,10 @@ public class GatewayManager {
                                     }
                                     if (doorSensorTimestamp.getTime() < motionSensorTimestamp.getTime()) {
                                     	deviceCommunicator.text = "turn-on";
+                                    } else {
+                                    	return;
                                     }
+                                    
                                     String rMessage = "on";
                                 	if (deviceCommunicator.text =="turn-off")	
                                 		rMessage = "off";
@@ -686,6 +691,8 @@ public class GatewayManager {
                 System.out.println("file read complete!");
                 ArrayList<String> gatewayEvents = map.get("Gateway");
                 ArrayList<String> time = map.get("Time");
+                if (gatewayEvents == null)
+                	return;
                 for (int i = 0 ; i < gatewayEvents.size(); i++) {
                 	String event = gatewayEvents.get(i).toLowerCase();
                 	for (int wait = 0; wait < 1000000000; wait++) {
