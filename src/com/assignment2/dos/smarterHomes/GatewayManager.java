@@ -71,8 +71,8 @@ public class GatewayManager {
         HashSet<String> connectionsList; // Stateful server;//contains the complete connection which are active
         String leader;
         boolean isLeader;
-        Timestamp doorSensorTimestamp;
-        Timestamp motionSensorTimestamp;
+        Date doorSensorTimestamp;
+        Date motionSensorTimestamp;
         int isSynchnronized;
 		double cumulativeTime;
 		int totalBerkeleyClockCnt;
@@ -186,8 +186,8 @@ public class GatewayManager {
         		clock = new LogicalClock();
         		berkeleyClock = new BerkeleyClock();
         		berkeleyClock.addMilliseconds(300);
-        		doorSensorTimestamp = new Timestamp(0);
-        		motionSensorTimestamp = new Timestamp(0);
+        		doorSensorTimestamp = new Date();
+        		motionSensorTimestamp = new Date();
         		isSynchnronized = 0;
         		avgTime = 0;
         		cumulativeTime = 0;
@@ -330,6 +330,7 @@ public class GatewayManager {
                                     	SmartHomesLogger logger = new SmartHomesLogger("Door Sensor not registered yet!");
                                     	return;
                                     }
+                                    motionSensorTimestamp = new Date();
                                     server.sendToTCP(map.get("DoorSensor").getID(), doorCommunicator);
                                     System.out.println("Gateway quering the door sensor");
                                     
@@ -382,7 +383,6 @@ public class GatewayManager {
                                     // Ignore the object if a client tries to chat before registering a name.
                                     if (connection.name == null) return;
                                     DoorSensorCommunicator doorSensorCommunicator = (DoorSensorCommunicator)object;
-
                                     clock.Compare(Double.parseDouble(doorSensorCommunicator.time));
                                     // Ignore the object if the chat message is invalid.
                                     String message = doorSensorCommunicator.text;
@@ -391,6 +391,7 @@ public class GatewayManager {
                                     message = message.trim();
                                     if (message.length() == 0) return;
                                     System.out.println("Recieved message from the door sensor!");
+                                    doorSensorTimestamp = new Date();
 
                                     clock.Event();
                                     MotionSensorCommunicator motionCommunicator = new MotionSensorCommunicator();
